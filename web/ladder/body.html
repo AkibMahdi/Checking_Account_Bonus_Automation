@@ -1,0 +1,79 @@
+<div class="shell">
+  <header class="masthead">
+    <div>
+      <h1>Bonus Ladder</h1>
+      <p>Every tracked US bank signup bonus, filtered against your situation and slotted onto your pay schedule — one rung at a time.</p>
+    </div>
+    <div class="stamp">
+      <b id="stampCount">— offers tracked</b>
+      <span id="stampDate">verified —</span>
+    </div>
+  </header>
+  <p class="privacy">Your settings stay in this browser. Nothing is uploaded — there is no server to upload it to.</p>
+
+  <div class="grid">
+    <aside class="rail">
+      <h2>Your situation</h2>
+      <div class="field"><label for="state">State</label>
+        <input type="text" id="state" maxlength="2" autocomplete="off" spellcheck="false" placeholder="NY"></div>
+      <div class="pair">
+        <div class="field"><label for="minBonus">Min bonus</label>
+          <input type="number" id="minBonus" min="0" step="25"></div>
+        <div class="field"><label for="concurrent">At once</label>
+          <input type="number" id="concurrent" min="1" max="12"></div>
+      </div>
+      <div class="field"><label for="capital">Cash you can park</label>
+        <input type="number" id="capital" min="0" step="1000"></div>
+
+      <h2 class="later">Your paycheck</h2>
+      <div class="field"><label for="cadence">How often you're paid</label>
+        <select id="cadence">
+          <option value="weekly">Weekly</option>
+          <option value="biweekly">Every two weeks</option>
+          <option value="semimonthly">Twice a month</option>
+          <option value="monthly">Monthly</option>
+        </select></div>
+      <div class="pair">
+        <div class="field"><label for="nextPay">Next payday</label>
+          <input type="date" id="nextPay"></div>
+        <div class="field"><label for="ddAmount">Take-home</label>
+          <input type="number" id="ddAmount" min="0" step="100"></div>
+      </div>
+
+      <div class="field"><label for="skipBanks">Banks to skip</label>
+        <input type="text" id="skipBanks" autocomplete="off" spellcheck="false"
+               placeholder="Chase, Wells Fargo">
+        <span class="hint">Ones you've taken a bonus from recently, or just don't want. Comma separated.</span></div>
+
+      <h2 class="later">Constraints</h2>
+      <label class="switch"><input type="checkbox" id="splittable"><span>My employer can split my direct deposit</span></label>
+      <label class="switch"><input type="checkbox" id="business"><span>Include business accounts</span></label>
+      <label class="switch"><input type="checkbox" id="chex"><span>Avoid banks that pull ChexSystems</span></label>
+      <label class="switch"><input type="checkbox" id="highOnly"><span>Only offers confirmed on the bank's own site</span></label>
+      <label class="switch"><input type="checkbox" id="totalMode"><span>Maximize total dollars, not dollars per week</span></label>
+      <button class="reset" id="reset" type="button">Reset to defaults</button>
+    </aside>
+
+    <main>
+      <div class="figures" id="figures"></div>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-view="plan" aria-selected="true">The ladder<span class="c" id="cPlan"></span></button>
+        <button class="tab" role="tab" data-view="all" aria-selected="false">Every offer<span class="c" id="cAll"></span></button>
+        <button class="tab" role="tab" data-view="why" aria-selected="false">Why not<span class="c" id="cWhy"></span></button>
+      </div>
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <footer>
+    <button class="copy" id="copyPlan" type="button">Copy the ladder as text</button>
+    <p><b>Not financial advice.</b> Bonuses are taxable income, usually reported on a 1099-INT. Opening
+    many accounts can trigger ChexSystems denials. Terms change without notice — open the source link on
+    every offer and confirm the requirements with the bank before you act.</p>
+    <p>The plan is arithmetic over what each bank's page said on the date shown, not a prediction. The
+    biggest unknown it cannot see is whether your employer's payment will actually code as a qualifying
+    direct deposit at a given bank.</p>
+    <p>Calendar files, the tax summary and the refresh pipeline live in the repo:
+    <code>python3 -m scripts.calendar --out bonus-plan.ics</code></p>
+  </footer>
+</div>

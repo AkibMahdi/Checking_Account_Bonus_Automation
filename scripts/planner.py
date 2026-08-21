@@ -509,7 +509,14 @@ def build_plan(offers: list[dict], config: dict, today: date, *, apy: float = DE
     for offer in candidates:
         best = None
         last_reason = ""
+        floor_reason = ""
         for variant, note in tier_variants(offer, capital_total):
+            reachable = _get(variant, "bonus", "amount", default=0) or 0
+            if reachable < profile["min_bonus_threshold"]:
+                floor_reason = floor_reason or (
+                    f"the ${reachable:,.0f} tier is under your "
+                    f"${profile['min_bonus_threshold']:,.0f} threshold")
+                continue
             feas = feasibility(variant, today + timedelta(days=1), pay_dates, config, dedicated_dd)
             if not feas.feasible:
                 last_reason = last_reason or feas.reason
@@ -519,10 +526,12 @@ def build_plan(offers: list[dict], config: dict, today: date, *, apy: float = DE
             if best is None or key > best[3]:
                 best = (variant, score, note, key)
         if best is None:
+            reason = "; and ".join(r for r in (last_reason, floor_reason) if r) \
+                or "no achievable tier"
             rejected.append(Rejection(offer["id"], _get(offer, "bank", "name", default="?"),
                                       _get(offer, "account", "name", default="?"),
                                       _get(offer, "bonus", "amount", default=0) or 0,
-                                      last_reason or "no achievable tier", "infeasible"))
+                                      reason, "infeasible"))
             continue
         ranked.append((best[0], best[1], best[2]))
     ranked.sort(

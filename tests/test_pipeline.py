@@ -351,3 +351,25 @@ def test_discover_dedupes_against_tracked_offers():
     assert norm("U.S. Bank") == norm("US Bank")
     assert norm("M&T Bank") == norm("M&T")
     assert norm("Chase") != norm("Citibank")
+
+
+# ---------------------------------------------------------------- ui build
+def test_ui_build_inlines_every_offer_and_leaves_no_placeholders():
+    from scripts.build_ui import build
+    from datetime import date as _date
+    standalone, fragment = build(load_offers(), _date(2026, 8, 21))
+    assert "__OFFERS_JSON__" not in standalone and "__BUILT_ON__" not in standalone
+    assert standalone.startswith("<!doctype html>") and standalone.rstrip().endswith("</html>")
+    assert not fragment.lstrip().startswith("<!doctype")          # Artifact fragment
+    assert "<title>Bonus Ladder</title>" in fragment
+    for offer in load_offers():
+        assert offer["id"] in standalone
+
+
+def test_ui_has_no_external_dependencies_beyond_google_fonts():
+    import re
+    from scripts.build_ui import build
+    from datetime import date as _date
+    standalone, _ = build(load_offers(), _date(2026, 8, 21))
+    hosts = set(re.findall(r'(?:src|href)="https?://([^/"]+)', standalone))
+    assert hosts <= {"fonts.googleapis.com", "fonts.gstatic.com"}, hosts

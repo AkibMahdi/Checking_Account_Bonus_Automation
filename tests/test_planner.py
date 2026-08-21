@@ -383,3 +383,36 @@ def test_stale_next_pay_date_rolls_forward():
 def test_empty_offer_list_produces_an_empty_plan():
     plan = build_plan([], base_config(), TODAY)
     assert plan["selected"] == [] and plan["totals"]["gross_bonus"] == 0
+
+
+def test_bonus_floor_applies_to_the_reachable_tier_not_the_headline():
+    """A $400 headline whose only reachable tier is $50 must not clear a $150 floor."""
+    offer = make_offer(
+        bonus={"amount": 400, "currency": "USD", "tier_mode": "alternative",
+               "tiers": [{"amount": 50, "condition": "$1,000 in deposits", "dd_cumulative": 1000,
+                          "window_days": 25},
+                         {"amount": 400, "condition": "$5,000 in deposits", "dd_cumulative": 5000,
+                          "window_days": 25}]},
+        requirements={"direct_deposit": {"required": True, "count": None, "min_amount_each": None,
+                                         "min_amount_cumulative": 5000, "window_days": 25,
+                                         "window_starts": "first_deposit"}})
+    plan = build_plan([offer], base_config(), TODAY)
+    assert plan["selected"] == []
+    reason = plan["rejected"][0]["reason"]
+    assert "$50" in reason and "threshold" in reason and "25-day window" in reason
+
+
+def test_a_reachable_lower_tier_above_the_floor_is_still_planned():
+    offer = make_offer(
+        bonus={"amount": 400, "currency": "USD", "tier_mode": "alternative",
+               "tiers": [{"amount": 200, "condition": "$1,000 in deposits", "dd_cumulative": 1000,
+                          "window_days": 25},
+                         {"amount": 400, "condition": "$9,000 in deposits", "dd_cumulative": 9000,
+                          "window_days": 25}]},
+        requirements={"direct_deposit": {"required": True, "count": None, "min_amount_each": None,
+                                         "min_amount_cumulative": 9000, "window_days": 25,
+                                         "window_starts": "first_deposit"}})
+    plan = build_plan([offer], base_config(), TODAY)
+    assert len(plan["selected"]) == 1
+    assert plan["selected"][0]["bonus_amount"] == 200
+    assert plan["selected"][0]["headline_amount"] == 400

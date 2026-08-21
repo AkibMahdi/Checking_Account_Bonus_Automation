@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonus Ladder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --card:#ffffff; --sunk:#eef1f5;
+  --ink:#131820; --ink-2:#4a5566; --ink-3:#7b8798;
+  --rule:#dde3ea; --rule-2:#c9d2dc;
+  --accent:#2c4a7c; --accent-ink:#ffffff; --accent-wash:#e6ecf5;
+  --banked:#1f6b4a; --banked-wash:#e2efe8;
+  --caution:#8a6412; --caution-wash:#f5eddb;
+  --blocked:#96332b; --blocked-wash:#f6e6e3;
+  --shadow:0 1px 2px rgba(19,24,32,.05), 0 1px 1px rgba(19,24,32,.04);
+  --serif:"Spectral",Georgia,"Times New Roman",serif;
+  --sans:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:9px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#11141a; --card:#191d25; --sunk:#141821;
+    --ink:#e9edf3; --ink-2:#a6b1c0; --ink-3:#78838f;
+    --rule:#2a303b; --rule-2:#39414f;
+    --accent:#7ea3d8; --accent-ink:#0e1218; --accent-wash:#1c2634;
+    --banked:#63b691; --banked-wash:#16261f;
+    --caution:#d4a44a; --caution-wash:#2a2216;
+    --blocked:#e08a80; --blocked-wash:#2b1a18;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 1px 1px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11141a; --card:#191d25; --sunk:#141821;
+  --ink:#e9edf3; --ink-2:#a6b1c0; --ink-3:#78838f;
+  --rule:#2a303b; --rule-2:#39414f;
+  --accent:#7ea3d8; --accent-ink:#0e1218; --accent-wash:#1c2634;
+  --banked:#63b691; --banked-wash:#16261f;
+  --caution:#d4a44a; --caution-wash:#2a2216;
+  --blocked:#e08a80; --blocked-wash:#2b1a18;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 1px 1px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent)}
+.shell{max-width:1240px;margin:0 auto;padding:30px 22px 72px}
+
+/* ---------- masthead ---------- */
+.masthead{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;
+  border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:6px}
+.masthead h1{font-family:var(--serif);font-weight:600;font-size:2.1rem;letter-spacing:-.015em;
+  margin:0;text-wrap:balance}
+.masthead p{margin:5px 0 0;color:var(--ink-2);font-size:.92rem;max-width:56ch}
+.stamp{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);text-align:right;line-height:1.7}
+.stamp b{display:block;color:var(--ink-2);font-weight:500}
+.privacy{font-size:.8rem;color:var(--ink-2);margin:10px 0 26px;
+  border-left:2px solid var(--rule-2);padding-left:10px}
+
+/* ---------- layout ---------- */
+.grid{display:grid;grid-template-columns:272px minmax(0,1fr);gap:26px;align-items:start}
+main{min-width:0}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- control rail ---------- */
+.rail{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+  padding:16px 16px 18px;box-shadow:var(--shadow);position:sticky;top:18px}
+@media(max-width:900px){.rail{position:static}}
+.rail h2,.legend h3{font-family:var(--mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 12px;font-weight:500}
+.rail h2+.field{margin-top:0}
+.rail h2.later{margin-top:22px;padding-top:16px;border-top:1px solid var(--rule)}
+.field{margin-top:12px}
+.field label{display:block;font-size:.76rem;color:var(--ink-2);margin-bottom:4px}
+.field input,.field select{width:100%;padding:7px 9px;border:1px solid var(--rule-2);border-radius:6px;
+  background:var(--paper);color:var(--ink);font:inherit;font-size:.86rem}
+.field input[type=number],.field input[inputmode=numeric]{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.field input:focus-visible,.field select:focus-visible,button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.hint{display:block;font-size:.72rem;color:var(--ink-3);margin-top:5px;line-height:1.4}
+.pair{display:flex;gap:8px}.pair>*{flex:1;min-width:0}
+.switch{display:flex;gap:9px;align-items:flex-start;margin-top:11px;font-size:.82rem;color:var(--ink)}
+.switch input{margin:3px 0 0;accent-color:var(--accent)}
+.reset{margin-top:16px;width:100%;padding:7px;border:1px solid var(--rule-2);background:none;
+  color:var(--ink-2);font:inherit;font-size:.78rem;border-radius:6px;cursor:pointer}
+.reset:hover{border-color:var(--ink-3);color:var(--ink)}
+
+/* ---------- figures ---------- */
+.figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:22px}
+.fig{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:13px 15px;box-shadow:var(--shadow)}
+.fig .v{font-family:var(--mono);font-size:1.5rem;font-weight:500;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;display:block;line-height:1.15}
+.fig .k{font-size:.71rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);
+  font-family:var(--mono);margin-top:3px;display:block}
+.fig .n{font-size:.78rem;color:var(--ink-2);margin-top:5px;display:block}
+.fig.lead .v{color:var(--banked)}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--rule);margin-bottom:18px;flex-wrap:wrap}
+.tab{padding:9px 15px;border:0;background:none;color:var(--ink-3);font:inherit;font-size:.88rem;
+  cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab:hover{color:var(--ink-2)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.tab .c{font-family:var(--mono);font-size:.74rem;color:var(--ink-3);margin-left:5px}
+
+/* ---------- schedule ---------- */
+.schedule{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+  padding:16px 18px 10px;box-shadow:var(--shadow);margin-bottom:18px}
+.sched-scroll{overflow-x:auto}
+.sched-inner{min-width:660px}
+.axis{position:relative;height:20px;border-bottom:1px solid var(--rule);margin-left:var(--lane);
+  margin-bottom:8px}
+.axis span{position:absolute;top:0;font-family:var(--mono);font-size:.66rem;color:var(--ink-3);
+  letter-spacing:.04em;transform:translateX(-1px);padding-left:5px;border-left:1px solid var(--rule)}
+.lane{display:grid;grid-template-columns:var(--lane) minmax(0,1fr);align-items:center;
+  gap:0;padding:5px 0}
+.lane .who{font-size:.775rem;color:var(--ink-2);padding-right:12px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.lane .who b{color:var(--ink);font-weight:600}
+.track{position:relative;height:22px;background:var(--sunk);border-radius:4px}
+.seg{position:absolute;top:0;height:22px;border-radius:4px}
+.seg.win{background:var(--accent)}
+.seg.wait{background:var(--accent-wash);border:1px solid var(--accent);border-left:0}
+.seg.hold{background:repeating-linear-gradient(135deg,var(--sunk),var(--sunk) 4px,var(--rule) 4px,var(--rule) 5px);
+  border:1px solid var(--rule)}
+.tick{position:absolute;top:4px;width:2px;height:14px;background:var(--accent-ink);opacity:.85;border-radius:1px}
+.pin{position:absolute;top:2px;height:18px;display:flex;align-items:center;gap:4px;
+  transform:translateX(4px);font-family:var(--mono);font-size:.68rem;color:var(--banked);white-space:nowrap}
+.pin::before{content:"";width:7px;height:7px;border-radius:99px;background:var(--banked);
+  transform:translateX(-4px)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:12px;padding-top:11px;
+  border-top:1px solid var(--rule)}
+.legend span{display:flex;align-items:center;gap:6px;font-size:.74rem;color:var(--ink-2)}
+.chip{width:16px;height:10px;border-radius:3px;display:inline-block}
+.chip.win{background:var(--accent)}
+.chip.wait{background:var(--accent-wash);border:1px solid var(--accent)}
+.chip.hold{background:repeating-linear-gradient(135deg,var(--sunk),var(--sunk) 4px,var(--rule) 4px,var(--rule) 5px);border:1px solid var(--rule)}
+
+/* ---------- action strip ---------- */
+.next{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--caution);
+  border-radius:var(--r);padding:14px 17px;margin-bottom:18px;box-shadow:var(--shadow)}
+.next h3{font-family:var(--mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 9px;font-weight:500}
+.next ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.next li{display:flex;gap:11px;font-size:.87rem;align-items:baseline}
+.next time{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);flex:0 0 auto;min-width:5.6em}
+.next .in{font-family:var(--mono);font-size:.72rem;color:var(--ink-3);flex:0 0 auto}
+
+/* ---------- offer cards ---------- */
+.card{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+  box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+.card-top{display:flex;gap:14px;align-items:flex-start;padding:14px 17px 12px}
+.rung{font-family:var(--mono);font-size:.78rem;color:var(--ink-3);padding-top:3px;flex:0 0 auto}
+.card-top h3{margin:0;font-family:var(--serif);font-size:1.12rem;font-weight:600;letter-spacing:-.01em}
+.card-top .sub{color:var(--ink-2);font-size:.8rem;margin-top:2px}
+.card-top .amt{margin-left:auto;text-align:right;flex:0 0 auto}
+.card-top .amt b{font-family:var(--mono);font-size:1.24rem;font-weight:500;color:var(--banked);
+  font-variant-numeric:tabular-nums;display:block}
+.card-top .amt s{display:block;font-family:var(--mono);font-size:.68rem;color:var(--ink-3);
+  text-decoration:none;margin-top:1px}
+.tag{display:inline-block;font-family:var(--mono);font-size:.63rem;letter-spacing:.08em;
+  text-transform:uppercase;padding:2px 6px;border-radius:3px;margin-right:5px;
+  background:var(--sunk);color:var(--ink-2);border:1px solid var(--rule)}
+.tag.high{background:var(--banked-wash);color:var(--banked);border-color:currentColor}
+.tag.medium{background:var(--caution-wash);color:var(--caution);border-color:currentColor}
+.tag.low{background:var(--blocked-wash);color:var(--blocked);border-color:currentColor}
+.tag.code{background:var(--accent-wash);color:var(--accent);border-color:currentColor;text-transform:none;letter-spacing:.02em}
+.steps{list-style:none;margin:0;padding:0 17px 4px;display:flex;flex-direction:column}
+.steps li{display:grid;grid-template-columns:6.4em minmax(0,1fr);gap:12px;padding:5px 0;
+  border-top:1px dotted var(--rule);font-size:.87rem;align-items:baseline}
+.steps li:first-child{border-top:0}
+.steps time{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.steps .fine{color:var(--ink-3);font-size:.8rem}
+.notes{padding:9px 17px 13px;background:var(--sunk);border-top:1px solid var(--rule);
+  display:flex;flex-direction:column;gap:5px}
+.notes p{margin:0;font-size:.79rem;color:var(--ink-2);display:flex;gap:7px}
+.notes p::before{content:"—";color:var(--caution);flex:0 0 auto}
+.notes .src{margin-top:3px;font-size:.76rem}
+.notes .src::before{content:none}
+
+/* ---------- tables ---------- */
+.sheet{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+  box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.sheet h3{font-family:var(--mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);margin:0;padding:13px 17px 11px;font-weight:500;border-bottom:1px solid var(--rule)}
+.sheet h3 em{font-style:normal;color:var(--ink-2)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{text-align:left;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;padding:9px 14px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--sunk)}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td .sub{color:var(--ink-3);font-size:.78rem;display:block}
+td.reason{color:var(--ink-2);min-width:22em}
+.empty{padding:44px 20px;text-align:center;color:var(--ink-3);font-size:.9rem}
+.empty b{color:var(--ink-2);display:block;font-size:1rem;margin-bottom:5px;font-family:var(--serif)}
+
+/* ---------- footer ---------- */
+footer{margin-top:38px;padding-top:18px;border-top:1px solid var(--rule);
+  color:var(--ink-3);font-size:.79rem;display:flex;flex-direction:column;gap:9px}
+footer b{color:var(--ink-2)}
+footer code{font-family:var(--mono);font-size:.92em;background:var(--sunk);padding:1px 5px;border-radius:3px}
+.copy{align-self:flex-start;padding:7px 13px;border:1px solid var(--rule-2);background:var(--card);
+  color:var(--ink);font:inherit;font-size:.8rem;border-radius:6px;cursor:pointer}
+.copy:hover{border-color:var(--accent);color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="shell">
+  <header class="masthead">
+    <div>
+      <h1>Bonus Ladder</h1>
+      <p>Every tracked US bank signup bonus, filtered against your situation and slotted onto your pay schedule — one rung at a time.</p>
+    </div>
+    <div class="stamp">
+      <b id="stampCount">— offers tracked</b>
+      <span id="stampDate">verified —</span>
+    </div>
+  </header>
+  <p class="privacy">Your settings stay in this browser. Nothing is uploaded — there is no server to upload it to.</p>
+
+  <div class="grid">
+    <aside class="rail">
+      <h2>Your situation</h2>
+      <div class="field"><label for="state">State</label>
+        <input type="text" id="state" maxlength="2" autocomplete="off" spellcheck="false" placeholder="NY"></div>
+      <div class="pair">
+        <div class="field"><label for="minBonus">Min bonus</label>
+          <input type="number" id="minBonus" min="0" step="25"></div>
+        <div class="field"><label for="concurrent">At once</label>
+          <input type="number" id="concurrent" min="1" max="12"></div>
+      </div>
+      <div class="field"><label for="capital">Cash you can park</label>
+        <input type="number" id="capital" min="0" step="1000"></div>
+
+      <h2 class="later">Your paycheck</h2>
+      <div class="field"><label for="cadence">How often you're paid</label>
+        <select id="cadence">
+          <option value="weekly">Weekly</option>
+          <option value="biweekly">Every two weeks</option>
+          <option value="semimonthly">Twice a month</option>
+          <option value="monthly">Monthly</option>
+        </select></div>
+      <div class="pair">
+        <div class="field"><label for="nextPay">Next payday</label>
+          <input type="date" id="nextPay"></div>
+        <div class="field"><label for="ddAmount">Take-home</label>
+          <input type="number" id="ddAmount" min="0" step="100"></div>
+      </div>
+
+      <div class="field"><label for="skipBanks">Banks to skip</label>
+        <input type="text" id="skipBanks" autocomplete="off" spellcheck="false"
+               placeholder="Chase, Wells Fargo">
+        <span class="hint">Ones you've taken a bonus from recently, or just don't want. Comma separated.</span></div>
+
+      <h2 class="later">Constraints</h2>
+      <label class="switch"><input type="checkbox" id="splittable"><span>My employer can split my direct deposit</span></label>
+      <label class="switch"><input type="checkbox" id="business"><span>Include business accounts</span></label>
+      <label class="switch"><input type="checkbox" id="chex"><span>Avoid banks that pull ChexSystems</span></label>
+      <label class="switch"><input type="checkbox" id="highOnly"><span>Only offers confirmed on the bank's own site</span></label>
+      <label class="switch"><input type="checkbox" id="totalMode"><span>Maximize total dollars, not dollars per week</span></label>
+      <button class="reset" id="reset" type="button">Reset to defaults</button>
+    </aside>
+
+    <main>
+      <div class="figures" id="figures"></div>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-view="plan" aria-selected="true">The ladder<span class="c" id="cPlan"></span></button>
+        <button class="tab" role="tab" data-view="all" aria-selected="false">Every offer<span class="c" id="cAll"></span></button>
+        <button class="tab" role="tab" data-view="why" aria-selected="false">Why not<span class="c" id="cWhy"></span></button>
+      </div>
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <footer>
+    <button class="copy" id="copyPlan" type="button">Copy the ladder as text</button>
+    <p><b>Not financial advice.</b> Bonuses are taxable income, usually reported on a 1099-INT. Opening
+    many accounts can trigger ChexSystems denials. Terms change without notice — open the source link on
+    every offer and confirm the requirements with the bank before you act.</p>
+    <p>The plan is arithmetic over what each bank's page said on the date shown, not a prediction. The
+    biggest unknown it cannot see is whether your employer's payment will actually code as a qualifying
+    direct deposit at a given bank.</p>
+    <p>Calendar files, the tax summary and the refresh pipeline live in the repo:
+    <code>python3 -m scripts.calendar --out bonus-plan.ics</code></p>
+  </footer>
+</div>
+
+<script>
+(() => {
+"use strict";
+const OFFERS = [{"id":"chase-platinum-business-checking-3000-2026","bank":{"name":"Chase","type":"national_bank","chexsystems":null},"account":{"name":"Platinum Business Checking","category":"business_checking","monthly_fee":null,"fee_waiver":null,"personal_or_business":"business","min_opening_deposit":null},"bonus":{"amount":3000,"currency":"USD","tiers":null,"payout_days_after_completion":null,"taxable_1099int":null,"tier_mode":null},"requirements":{"direct_deposit":{"required":false,"count":null,"min_amount_each":null,"min_amount_cumulative":null,"window_days":60,"window_starts":"offer_enrollment","qualifying_notes":"No direct deposit required; this is a pure balance-park offer."},"min_balance":{"amount":300000,"new_money":true,"fund_within_days":60,"hold_days":180},"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Deposit $300,000+ within 60 days of enrollment and maintain at least a $300,000 balance for 180 days from enrollment."},"eligibility":{"cooldown_months":null,"cooldown_basis":null,"cooldown_notes":"New business customers only.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-10-01","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.chase.com/business/banking/checking","aggregator_urls":[],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Capital-intensive: $300k parked for 6 months. Included to prove the schema handles balance-only offers with no DD leg."},{"id":"capital-one-360-performance-savings-1500-2026","bank":{"name":"Capital One","type":"national_bank","chexsystems":null},"account":{"name":"360 Performance Savings","category":"savings","monthly_fee":0,"fee_waiver":"No monthly fees","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":1500,"currency":"USD","tiers":[{"amount":300,"condition":"Deposit $20,000-$49,999.99 within 15 days of account opening and hold 90 days","dd_cumulative":null,"dd_count":null,"min_balance":20000,"window_days":15,"repeatable_cycles":null},{"amount":750,"condition":"Deposit $50,000-$99,999.99 within 15 days of account opening and hold 90 days","dd_cumulative":null,"dd_count":null,"min_balance":50000,"window_days":15,"repeatable_cycles":null},{"amount":1500,"condition":"Deposit $100,000+ within 15 days of account opening and hold 90 days","dd_cumulative":null,"dd_count":null,"min_balance":100000,"window_days":15,"repeatable_cycles":null}],"payout_days_after_completion":60,"taxable_1099int":true,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":false,"count":null,"min_amount_each":null,"min_amount_cumulative":null,"window_days":null,"window_starts":null,"qualifying_notes":null},"min_balance":{"amount":20000,"new_money":true,"fund_within_days":15,"hold_days":90},"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":false},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":0,"notes":"Balance must be held 90 days after the close of the 15-day funding window; no early closure penalty reported."},"eligibility":{"cooldown_months":null,"cooldown_basis":"per_person","cooldown_notes":"Ineligible if you held a 360 Performance Savings, 360 Savings, 360 Money Market, Savings Now or Confidence Savings account as primary or secondary holder on or after 2024-01-01.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"soft","in_branch_required":false,"promo_code":"BONUS1500"},"dates":{"deadline":null,"enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.doctorofcredit.com/capital-one-300-1500-savings-bonus-requires-20000-100000-deposit/","aggregator_urls":["https://bankbonus.com/promotions/capital-one/360-savings-1000-bonus/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Pure capital play, no DD. The planner gates this on profile.max_liquid_capital \u2014 the lowest tier already needs $20,000."},{"id":"citi-checking-balance-1500-2026","bank":{"name":"Citibank","type":"national_bank","chexsystems":null},"account":{"name":"Citi Checking","category":"checking","monthly_fee":12,"fee_waiver":"Waived when the account receives $250+ per month in qualifying Enhanced Direct Deposits","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":1500,"currency":"USD","tiers":[{"amount":500,"condition":"Deposit $30,000+ in new-to-Citi funds and hold for the required period (no direct deposit required)","dd_cumulative":null,"dd_count":null,"min_balance":30000,"window_days":90,"repeatable_cycles":null},{"amount":1500,"condition":"Deposit $200,000+ in new-to-Citi funds and hold for the required period (no direct deposit required)","dd_cumulative":null,"dd_count":null,"min_balance":200000,"window_days":90,"repeatable_cycles":null}],"payout_days_after_completion":30,"taxable_1099int":null,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":false,"count":null,"min_amount_each":null,"min_amount_cumulative":null,"window_days":null,"window_starts":null,"qualifying_notes":"No direct deposit on this path \u2014 the bonus is funded by new-to-Citi balances."},"min_balance":{"amount":30000,"new_money":true,"fund_within_days":20,"hold_days":60},"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"No early-closure fee reported. The balance tiers require holding the deposited balance for a period after funding rather than a post-bonus hold."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":"Requires not having owned a Citi checking account in the last 365 days.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"soft","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-10-22","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.doctorofcredit.com/citi-300-checking-bonus/","aggregator_urls":["https://www.citi.com/banking/special-offers","https://bankbonus.com/promotions/citibank/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Balance-funded path for the same Citi Checking account. Split out from citi-checking-475-2026 because the validator caught the real modelling rule: one offer file = one requirement path. Mixing a $3,000-in-DDs tier and a $200,000-balance tier in one file makes bonus.amount meaningless and makes the planner's feasibility check wrong for both."},{"id":"axos-business-premium-savings-600-2027","bank":{"name":"Axos Bank","type":"online_bank","chexsystems":true},"account":{"name":"Business Premium Savings + Basic Business Checking","category":"business_checking","monthly_fee":0,"fee_waiver":"No monthly maintenance fee","personal_or_business":"business","min_opening_deposit":null},"bonus":{"amount":600,"currency":"USD","tiers":[{"amount":100,"condition":"Per qualifying statement cycle: deposit $1,000+ via ACH/check/wire into checking, make 2+ debit purchases of $50+, keep $1,500+ average daily balance in checking and $50,000+ in Business Premium Savings","dd_cumulative":1000,"dd_count":null,"min_balance":50000,"window_days":30,"repeatable_cycles":6}],"payout_days_after_completion":15,"taxable_1099int":null,"tier_mode":"repeating"},"requirements":{"direct_deposit":{"required":false,"count":null,"min_amount_each":1000,"min_amount_cumulative":null,"window_days":30,"window_starts":"account_open","qualifying_notes":"Deposits may be ACH, check or wire \u2014 not restricted to payroll direct deposit."},"min_balance":{"amount":50000,"new_money":true,"fund_within_days":30,"hold_days":210},"debit_transactions":{"count":2,"min_amount_each":50,"window_days":30},"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":false},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":50,"notes":"$50 early closure fee if closed within 180 days. Both accounts must be opened through a single bundled application. The $100 is earnable in up to 6 of the first 7 statement cycles."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":"New customers only; cannot have qualified for any Axos promotion in the 12 months prior to opening.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"soft","in_branch_required":false,"promo_code":"SBB600"},"dates":{"deadline":"2027-01-31","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.doctorofcredit.com/axos-bank-600-business-checking-savings-bonus/","aggregator_urls":["https://bankbonus.com/promotions/axos-bank/","https://www.hustlermoneyblog.com/axos-bank-business-premium-savings-review/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Repeating tier: $100 per qualifying statement cycle, up to 6 of the first 7 cycles = $600. bonus.amount is the full $600 but the timeline is ~6 months, not one cycle."},{"id":"huntington-perks-checking-600-2026","bank":{"name":"Huntington Bank","type":"regional_bank","chexsystems":null},"account":{"name":"Perks Checking / Platinum Perks Checking","category":"checking","monthly_fee":10,"fee_waiver":"Perks ($10/mo): waived with $1,000+ in monthly deposits or $5,000 total relationship balance. Platinum Perks ($25/mo): waived with $25,000 total relationship balance","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":600,"currency":"USD","tiers":[{"amount":400,"condition":"Open Perks Checking and receive qualifying direct deposits totaling $500+ within 90 days of account opening","dd_cumulative":500,"dd_count":null,"min_balance":null,"window_days":90,"repeatable_cycles":null},{"amount":600,"condition":"Open Platinum Perks Checking and make total new money deposits of at least $25,000 within 90 days (no direct deposit required)","dd_cumulative":null,"dd_count":null,"min_balance":25000,"window_days":90,"repeatable_cycles":null}],"payout_days_after_completion":14,"taxable_1099int":null,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":500,"window_days":90,"window_starts":"account_open","qualifying_notes":"P2P transfers (PayPal, Zelle, Venmo), Real-Time Payments and transfers from other Huntington accounts do not count."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Account must remain open a minimum of 90 days."},"eligibility":{"cooldown_months":24,"cooldown_basis":"per_person","cooldown_notes":null,"states_included":["AL","AR","CO","FL","GA","IL","IN","KY","LA","MI","MN","MS","MO","NC","OH","PA","SC","TN","TX","WV","WI"],"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-09-30","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.huntington.com/checking-account-promotions-bonuses-offers","aggregator_urls":["https://www.doctorofcredit.com/best-bank-account-bonuses/","https://www.hustlermoneyblog.com/huntington-bank-promotions/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"The $600 tier is balance-driven, not DD-driven \u2014 the $400 Perks tier is the one a biweekly earner actually plans around."},{"id":"fourleaf-fcu-free-checking-550-2026","bank":{"name":"FourLeaf Federal Credit Union","type":"credit_union","chexsystems":null},"account":{"name":"FourLeaf Free Checking","category":"checking","monthly_fee":0,"fee_waiver":"Free Checking \u2014 no monthly fee","personal_or_business":"personal","min_opening_deposit":5},"bonus":{"amount":550,"currency":"USD","tiers":[{"amount":350,"condition":"Receive a qualifying direct deposit of $500+ within 90 days of account opening and make 10 point-of-sale debit card transactions","dd_cumulative":500,"dd_count":1,"min_balance":null,"window_days":90,"repeatable_cycles":null},{"amount":100,"condition":"At the 12-month anniversary, having maintained monthly recurring direct deposits of $500+ and 10 POS debit transactions per month","dd_cumulative":6000,"dd_count":12,"min_balance":null,"window_days":365,"repeatable_cycles":null},{"amount":100,"condition":"At the 24-month anniversary, having maintained monthly recurring direct deposits of $500+ and 10 POS debit transactions per month","dd_cumulative":12000,"dd_count":24,"min_balance":null,"window_days":730,"repeatable_cycles":null}],"payout_days_after_completion":60,"taxable_1099int":null,"tier_mode":"additive"},"requirements":{"direct_deposit":{"required":true,"count":1,"min_amount_each":500,"min_amount_cumulative":null,"window_days":90,"window_starts":"account_open","qualifying_notes":null},"min_balance":null,"debit_transactions":{"count":10,"min_amount_each":null,"window_days":90},"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Account must remain open and in good standing through each bonus deposit date; the anniversary tiers require sustained monthly DD and debit activity for up to 24 months."},"eligibility":{"cooldown_months":null,"cooldown_basis":"per_person","cooldown_notes":"No existing FourLeaf checking account as primary holder; no prior FourLeaf new-checking bonus; one bonus per member.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-12-31","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.fourleaffcu.com/ppc/checking-promo-550/","aggregator_urls":["https://www.doctorofcredit.com/four-leaf-federal-credit-union-550-checking-bonus-fka-as-bethpage-federalcredit-union/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Tiers here are ADDITIVE, not alternative: $350 up front plus $100 at each of the 12- and 24-month anniversaries = $550 over two years. This is the edge case that forced bonus.tier_mode into the schema \u2014 without it the planner would credit $550 against a 90-day timeline and rank this first by a mile. The planner scores the $350 near-term tier and surfaces the anniversary tiers as caveats."},{"id":"chase-business-complete-banking-500-2026","bank":{"name":"Chase","type":"national_bank","chexsystems":null},"account":{"name":"Business Complete Banking","category":"business_checking","monthly_fee":15,"fee_waiver":"Waived with any of: $2,000 minimum daily balance; $2,000 in monthly purchases on a linked Chase Ink card; $2,000 in Chase QuickAccept deposits; linked Chase Private Client Checking; qualifying military status","personal_or_business":"business","min_opening_deposit":null},"bonus":{"amount":500,"currency":"USD","tiers":[{"amount":400,"condition":"Deposit $2,000+ in new money within 30 days and hold it 60 days from enrollment, plus 5 qualifying transactions within 90 days","dd_cumulative":null,"dd_count":null,"min_balance":2000,"window_days":30,"repeatable_cycles":null},{"amount":500,"condition":"Deposit $10,000+ in new money within 30 days and hold it 60 days from enrollment, plus 5 qualifying transactions within 90 days","dd_cumulative":null,"dd_count":null,"min_balance":10000,"window_days":30,"repeatable_cycles":null}],"payout_days_after_completion":15,"taxable_1099int":true,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":false,"count":null,"min_amount_each":null,"min_amount_cumulative":null,"window_days":30,"window_starts":"offer_enrollment","qualifying_notes":"No direct deposit required. Qualifying transactions are debit purchases, QuickAccept deposits, QuickDeposit, ACH credits, wires and Chase Online Bill Pay. ACH debits, Zelle and credit card transfers are excluded."},"min_balance":{"amount":10000,"new_money":true,"fund_within_days":30,"hold_days":60},"debit_transactions":{"count":5,"min_amount_each":null,"window_days":90},"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":180,"early_close_fee":null,"notes":"Account must stay open roughly 6 months or the bonus is forfeited. Chase reportedly withholds an estimated-tax amount from the bonus."},"eligibility":{"cooldown_months":24,"cooldown_basis":"per_person","cooldown_notes":"One bonus per customer per two-year period. Existing Chase business checking customers excluded, as are accounts closed within the prior 3 years with a negative balance.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"soft","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-10-15","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.doctorofcredit.com/chase-business-checking-500-online-bonus-no-direct-deposit-required/","aggregator_urls":["https://www.moneysmylife.com/chase-business-checking-promotions/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Business offer \u2014 excluded unless profile.allow_business_accounts is true."},{"id":"keybank-smart-checking-500-2026","bank":{"name":"KeyBank","type":"regional_bank","chexsystems":null},"account":{"name":"Key Smart Checking / Key Select Checking","category":"checking","monthly_fee":0,"fee_waiver":"Key Smart Checking has no monthly maintenance fee. Key Select is $25/mo, waived for the first 3 months and thereafter with $3,000+ in direct deposits or $15,000+ combined balances","personal_or_business":"personal","min_opening_deposit":50},"bonus":{"amount":500,"currency":"USD","tiers":[{"amount":300,"condition":"Open Key Smart Checking ($10 minimum opening deposit) and receive $2,000+ in qualifying direct deposits within 90 days","dd_cumulative":2000,"dd_count":null,"min_balance":null,"window_days":90,"repeatable_cycles":null},{"amount":500,"condition":"Open Key Select Checking ($50 minimum opening deposit) and receive $5,000+ in qualifying direct deposits within 90 days","dd_cumulative":5000,"dd_count":null,"min_balance":null,"window_days":90,"repeatable_cycles":null}],"payout_days_after_completion":60,"taxable_1099int":null,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":5000,"window_days":90,"window_starts":"account_open","qualifying_notes":null},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Account must remain open through bonus payout, up to 60 days after requirements are met."},"eligibility":{"cooldown_months":null,"cooldown_basis":null,"cooldown_notes":null,"states_included":["AK","CO","CT","ID","IN","MA","ME","MI","NY","OH","OR","PA","UT","VT","WA"],"states_excluded":[],"existing_customer_allowed":null,"pull_type":"unknown","in_branch_required":null,"promo_code":null},"dates":{"deadline":"2026-12-11","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://bankbonus.com/promotions/keybank/","aggregator_urls":["https://www.hustlermoneyblog.com/keybank-checking-account-bonus/","https://www.forbes.com/advisor/banking/keybank-bonus/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Cooldown is unstated by every source found \u2014 planner treats unknown cooldown as a caveat, not a pass."},{"id":"truist-one-checking-500-2026","bank":{"name":"Truist","type":"national_bank","chexsystems":null},"account":{"name":"Truist One Checking","category":"checking","monthly_fee":12,"fee_waiver":"Six waiver paths including age under 25, age 62+, student status, $500+ in qualifying direct deposits, $500+ combined balance, or a linked Truist credit product","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":500,"currency":"USD","tiers":null,"payout_days_after_completion":14,"taxable_1099int":null,"tier_mode":null},"requirements":{"direct_deposit":{"required":true,"count":2,"min_amount_each":null,"min_amount_cumulative":2000,"window_days":120,"window_starts":"account_open","qualifying_notes":null},"min_balance":null,"debit_transactions":{"count":20,"min_amount_each":null,"window_days":120},"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Requires BOTH at least 2 qualifying direct deposits totaling $2,000+ AND at least 20 qualifying debit card purchases, both within 120 days of account opening. Bonus paid within 10 business days after verification."},"eligibility":{"cooldown_months":null,"cooldown_basis":null,"cooldown_notes":null,"states_included":["AL","AR","DC","FL","GA","IN","KY","MD","MS","NC","NJ","OH","PA","SC","TN","TX","VA","WV"],"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2027-02-02","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.truist.com/checking/open-checking","aggregator_urls":["https://www.hustlermoneyblog.com/truist-bank-promotions/","https://bankbonus.com/promotions/truist-bank/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"The only offer requiring a large debit-transaction count alongside DDs \u2014 20 purchases in 120 days is ~1 every 6 days."},{"id":"citi-checking-475-2026","bank":{"name":"Citibank","type":"national_bank","chexsystems":null},"account":{"name":"Citi Checking","category":"checking","monthly_fee":12,"fee_waiver":"Waived when the account receives $250+ per month in qualifying Enhanced Direct Deposits","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":475,"currency":"USD","tiers":[{"amount":325,"condition":"$3,000+ in Enhanced Direct Deposits within 90 days of account opening","dd_cumulative":3000,"dd_count":2,"min_balance":null,"window_days":90,"repeatable_cycles":null},{"amount":475,"condition":"$5,000+ in Enhanced Direct Deposits within 90 days; limited-market availability","dd_cumulative":5000,"dd_count":2,"min_balance":null,"window_days":90,"repeatable_cycles":null}],"payout_days_after_completion":30,"taxable_1099int":null,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":true,"count":2,"min_amount_each":null,"min_amount_cumulative":3000,"window_days":90,"window_starts":"account_open","qualifying_notes":"Enhanced Direct Deposits are broader than typical: payroll, pension, Social Security and government benefits, plus Zelle and ACH-based P2P payments (Venmo, PayPal) reportedly qualify."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"No early-closure fee reported. The balance tiers require holding the deposited balance for a period after funding rather than a post-bonus hold."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":"Requires not having owned a Citi checking account in the last 365 days.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"soft","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-10-22","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.doctorofcredit.com/citi-300-checking-bonus/","aggregator_urls":["https://www.citi.com/banking/special-offers","https://bankbonus.com/promotions/citibank/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Citi renders its bonus terms dynamically, so amounts and deadline are aggregator-sourced. Sources conflict on the deadline (DoC says 2026-10-22, bankbonus.com says 2026-10-26). The $325 tier is nationwide; the $475 tier is limited-market (reported NY, CT, MD, VA, DC, CA, NV, NJ and select FL/IL) \u2014 headline is the max achievable, so verify market eligibility before planning on $475. The balance-funded path is filed separately as citi-checking-balance-1500-2026: same account, different requirement path, so it gets its own offer file."},{"id":"us-bank-smartly-checking-450-2026","bank":{"name":"U.S. Bank","type":"national_bank","chexsystems":true},"account":{"name":"Smartly Checking","category":"checking","monthly_fee":12,"fee_waiver":"Waived for the first two statement periods; thereafter with $1,500+ in monthly direct deposits, a $1,500 average balance, a Smartly Visa Signature card, Smart Rewards Gold+, military status, primary owner age 13-24 or 65+, or a linked small business account","personal_or_business":"personal","min_opening_deposit":25},"bonus":{"amount":450,"currency":"USD","tiers":[{"amount":250,"condition":"$2,000-$4,999.99 in qualifying direct deposits within 90 days of account opening","dd_cumulative":2000,"dd_count":2,"min_balance":null,"window_days":90,"repeatable_cycles":null},{"amount":350,"condition":"$5,000-$7,999.99 in qualifying direct deposits within 90 days of account opening","dd_cumulative":5000,"dd_count":2,"min_balance":null,"window_days":90,"repeatable_cycles":null},{"amount":450,"condition":"$8,000 or more in qualifying direct deposits within 90 days of account opening","dd_cumulative":8000,"dd_count":2,"min_balance":null,"window_days":90,"repeatable_cycles":null}],"payout_days_after_completion":30,"taxable_1099int":true,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":true,"count":2,"min_amount_each":null,"min_amount_cumulative":8000,"window_days":90,"window_starts":"account_open","qualifying_notes":"Two or more qualifying direct deposits (payroll or government benefits via ACH). P2P payments do not qualify."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"No clawback or early-closure penalty stated on the offer page."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":"Ineligible if you held a U.S. Bank consumer checking account in the last 12 months or received a U.S. Bank checking bonus in the last 12 months.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-09-08","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.usbank.com/splash/checking/2026-all-market-checking-offer.html","aggregator_urls":["https://www.doctorofcredit.com/u-s-bank-450-100-checking-bonus/","https://bankbonus.com/promotions/us-bank/personal-checking-bonus-offer/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Also requires enrolling in the U.S. Bank mobile app or online banking within 90 days. Bonus is credited as adjusted interest and reported on 1099-INT. Offer may be unavailable outside the U.S. Bank footprint but no state list is published, so states_included is left null."},{"id":"bmo-smart-advantage-checking-400-2026","bank":{"name":"BMO","type":"regional_bank","chexsystems":null},"account":{"name":"Smart Advantage Checking","category":"checking","monthly_fee":0,"fee_waiver":"Smart Advantage Checking has no monthly maintenance fee","personal_or_business":"personal","min_opening_deposit":25},"bonus":{"amount":400,"currency":"USD","tiers":null,"payout_days_after_completion":100,"taxable_1099int":true,"tier_mode":null},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":4000,"window_days":90,"window_starts":"account_open","qualifying_notes":"Must be regular income from an employer or similar third party (salary, paycheck, pension, Social Security or government benefits) deposited electronically."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Bonus is deposited approximately 100 days after account opening. Accounts with a zero balance may be closed. One bonus per eligible customer."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":null,"states_included":["AZ","CA","CO","FL","IA","IL","IN","MN","NM","NV","OR","UT","WA","WI"],"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-09-08","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.bmo.com/en-us/main/personal/checking-accounts/digital-offer/","aggregator_urls":["https://www.doctorofcredit.com/il-wi-mn-in-az-fl-ks-mo-bmo-harris-350-checking-300-savings-bonus/","https://www.hustlermoneyblog.com/bmo-harris-bank-promotions/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":null},{"id":"chase-total-checking-400-2026","bank":{"name":"Chase","type":"national_bank","chexsystems":null},"account":{"name":"Total Checking","category":"checking","monthly_fee":15,"fee_waiver":"$0 with any one of: $500+ in total qualifying electronic deposits per month; $1,500+ beginning-day balance; $5,000+ average beginning-day balance across linked qualifying accounts; or a linked qualifying Chase checking account","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":400,"currency":"USD","tiers":null,"payout_days_after_completion":15,"taxable_1099int":null,"tier_mode":null},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":1000,"window_days":90,"window_starts":"coupon_enrollment","qualifying_notes":"Qualifying electronic deposits: payroll, pension, government benefit and other ACH credits. Enrollment coupon is applied automatically when applying from the offer page."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Enrolled account must not be closed or restricted at the time of payout. No explicit post-bonus hold period stated on the offer page."},"eligibility":{"cooldown_months":24,"cooldown_basis":"per_person","cooldown_notes":"Also ineligible if you closed a Chase checking account within 90 days, or closed one with a negative balance in the last 3 years.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-10-14","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://account.chase.com/consumer/banking/seo","aggregator_urls":["https://www.nerdwallet.com/banking/learn/chase-signup-bonuses","https://bankbonus.com/promotions/chase-bank/chase-total-checking-bonus-offer/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"window_starts is coupon_enrollment, not account_open: the 90-day clock runs from when the coupon is enrolled."},{"id":"mt-bank-mychoice-plus-checking-400-2026","bank":{"name":"M&T Bank","type":"regional_bank","chexsystems":null},"account":{"name":"MyChoice Plus Checking","category":"checking","monthly_fee":14.95,"fee_waiver":"MyChoice Plus: $14.95/mo, waived with a $2,500 average daily balance or $1,500+ in direct deposits per cycle. EZChoice Checking ($0/mo) also qualifies for the offer; MyWay Banking does not","personal_or_business":"personal","min_opening_deposit":25},"bonus":{"amount":400,"currency":"USD","tiers":null,"payout_days_after_completion":90,"taxable_1099int":true,"tier_mode":null},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":500,"window_days":90,"window_starts":"account_open","qualifying_notes":"Recurring electronic deposits of payroll, pension or Social Security. P2P and bank-to-bank transfers do not count."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":180,"early_close_fee":50,"notes":"Aggregators report a $50 early closure fee within 180 days; this is not stated on the promo landing page."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":"Only one bonus per customer.","states_included":["CT","DC","DE","MA","MD","ME","NH","NJ","NY","PA","VA","VT","WV"],"states_excluded":[],"existing_customer_allowed":null,"pull_type":"unknown","in_branch_required":false,"promo_code":"TU"},"dates":{"deadline":"2026-08-31","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://campaigns.mtb.com/400bonus","aggregator_urls":["https://www.doctorofcredit.com/mt-bank-150-checking-bonus-tn-available-online-ct-dc-de-md-nj-ny-pa-va-wv/","https://www.hustlermoneyblog.com/mt-bank-promotions/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"One of only two offers in the set with a real clawback (180-day hold, $50 early close fee) \u2014 the safe-to-close date matters here."},{"id":"pnc-virtual-wallet-performance-select-400-2026","bank":{"name":"PNC","type":"national_bank","chexsystems":true},"account":{"name":"Virtual Wallet with Performance Select","category":"checking","monthly_fee":25,"fee_waiver":"Waived with a qualifying monthly direct deposit or qualifying relationship balances","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":400,"currency":"USD","tiers":[{"amount":100,"condition":"Open Virtual Wallet (base) and receive $500+ in qualifying direct deposits within the first 60 days","dd_cumulative":500,"dd_count":null,"min_balance":null,"window_days":60,"repeatable_cycles":null},{"amount":400,"condition":"Open Virtual Wallet with Performance Select and receive $5,000+ in qualifying direct deposits within the first 60 days","dd_cumulative":5000,"dd_count":null,"min_balance":null,"window_days":60,"repeatable_cycles":null}],"payout_days_after_completion":null,"taxable_1099int":null,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":5000,"window_days":60,"window_starts":"account_open","qualifying_notes":"Must be recurring direct deposits of paycheck, pension, Social Security or other regular income. Wires, P2P transfers, inter-account transfers and branch/ATM deposits do not count."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Account must remain open to receive the bonus. Bonus is credited 60-90 days after all conditions are met."},"eligibility":{"cooldown_months":24,"cooldown_basis":"per_person","cooldown_notes":"Two rules stack: ineligible with an existing PNC consumer checking account or one closed in the past 12 months, AND ineligible if you were primary signer on an account that received a PNC promotional premium in the past 24 months.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-08-31","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.pnc.com/en/personal-banking/banking/checking/bonus-offer.html","aggregator_urls":["https://www.doctorofcredit.com/pnc-up-to-250-400-checking-bonus/","https://bankbonus.com/promotions/pnc-bank/virtual-wallet-checking-bonus-offer/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Deadline is imminent (10 days from first_seen) \u2014 a good test of the near-expiry warning path. payout_days_after_completion is null because the bank states a 60-90 day range, not a single figure."},{"id":"regions-lifegreen-checking-400-2026","bank":{"name":"Regions Bank","type":"regional_bank","chexsystems":null},"account":{"name":"LifeGreen Checking","category":"checking","monthly_fee":8,"fee_waiver":"LifeGreen Checking: $8/mo with eStatements ($11 without). LifeGreen Preferred: $18/mo, waived with a $5,000 average monthly balance, $25,000 combined deposits, $25,000 qualifying loan balances, or a qualifying mortgage","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":400,"currency":"USD","tiers":null,"payout_days_after_completion":null,"taxable_1099int":null,"tier_mode":null},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":1000,"window_days":90,"window_starts":"offer_enrollment","qualifying_notes":"Qualifying ACH direct deposits within 90 days. Registration for the offer is separate from account opening."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":25,"notes":"$25 early closure fee if the account is closed within 180 days."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":null,"states_included":["AL","AR","FL","GA","IL","IN","IA","KY","LA","MS","MO","NC","SC","TN","TX"],"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":"EZV3F2M"},"dates":{"deadline":"2027-01-31","enroll_by":"2026-12-31","first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.regions.com/promo/pm/switch-to-regions?promo=EZV3F2M","aggregator_urls":["https://www.doctorofcredit.com/regions-bank-400-checking-bonus-50-referral-al-ar-fl-ga-il-in-ia-ky-la-ms-mo-nc-sc-tn-tx-2/","https://bankbonus.com/promotions/regions-bank/lifegreen-checking-400-bonus/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Two-date offer: register by 2026-12-31, open by 2027-01-31 \u2014 this is why enroll_by exists separately from deadline. A separate $50 referral bonus is also available."},{"id":"sofi-checking-and-savings-400-2026","bank":{"name":"SoFi","type":"online_bank","chexsystems":false},"account":{"name":"SoFi Checking and Savings","category":"checking","monthly_fee":0,"fee_waiver":"No account, overdraft, service or maintenance fees","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":400,"currency":"USD","tiers":[{"amount":0,"condition":"$1.00-$999.99 in eligible direct deposits during the 25-day evaluation period","dd_cumulative":1,"dd_count":null,"min_balance":null,"window_days":25,"repeatable_cycles":null},{"amount":50,"condition":"$1,000.00-$4,999.99 in eligible direct deposits during the 25-day evaluation period","dd_cumulative":1000,"dd_count":null,"min_balance":null,"window_days":25,"repeatable_cycles":null},{"amount":400,"condition":"$5,000.00 or more in eligible direct deposits during the 25-day evaluation period","dd_cumulative":5000,"dd_count":null,"min_balance":null,"window_days":25,"repeatable_cycles":null}],"payout_days_after_completion":7,"taxable_1099int":null,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":1,"min_amount_cumulative":5000,"window_days":25,"window_starts":"first_deposit","qualifying_notes":"Eligible deposits are payroll, pension or government benefit ACH credits from an employer, payroll provider, benefits provider or government agency. Zelle, PayPal and Venmo transfers do not qualify. The 25-day clock starts at the first eligible deposit of $1+."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Account must be in good standing at time of payment. No clawback or early-close fee stated."},"eligibility":{"cooldown_months":null,"cooldown_basis":"per_person","cooldown_notes":"Existing SoFi members qualify only if they have never previously set up direct deposit with SoFi. Limit one bonus per member; on joint accounts only the primary holder's activity counts.","states_included":null,"states_excluded":[],"existing_customer_allowed":true,"pull_type":"soft","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-12-31","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.sofi.com/banking/checking-offer/","aggregator_urls":["https://www.doctorofcredit.com/sofi-checking-5000-direct-deposit-required/","https://www.forbes.com/advisor/banking/sofi-promotions-bonus/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[{"date":"2026-07-14","counted":true,"method":"ACH payroll from Gusto","amount":2600,"source":"https://www.doctorofcredit.com/sofi-checking-5000-direct-deposit-required/","notes":"Posted same day as employer payroll."}],"notes":"The hardest window in the dataset: $5,000 cumulative in 25 days. A biweekly earner gets at most 2 pay dates in 25 days, so this needs typical_dd_amount >= $2,500. Doctor of Credit reports the bonus is issued on Form 1099-MISC, not 1099-INT; SoFi's page does not state the form, so taxable_1099int is null."},{"id":"wells-fargo-everyday-checking-325-2026","bank":{"name":"Wells Fargo","type":"national_bank","chexsystems":true},"account":{"name":"Everyday Checking","category":"checking","monthly_fee":15,"fee_waiver":"Waived per fee period with $500+ in qualifying electronic deposits, a $1,500 minimum daily balance, $5,000+ in combined Wells Fargo deposit and investment balances, primary owner age 17-24, or qualifying military direct deposit","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":325,"currency":"USD","tiers":null,"payout_days_after_completion":30,"taxable_1099int":null,"tier_mode":null},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":1000,"window_days":90,"window_starts":"account_open","qualifying_notes":"Qualifying deposits include ACH direct deposits, RTP/FedNow instant payments, and electronic credits from third-party services over the Visa/Mastercard networks."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Account must remain open through the date the bonus is deposited. Accounts with zero balances may be closed without notice."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":"Ineligible if you received a Wells Fargo checking bonus in the past 12 months. Employees, non-resident aliens, foreign entities and Private Bank accounts excluded. Cannot be combined with other checking promotions.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-10-13","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://accountoffers.wellsfargo.com/checkingoffer/","aggregator_urls":["https://www.doctorofcredit.com/wells-fargo-325-checking-bonus-available-online/","https://www.forbes.com/advisor/banking/wells-fargo-promotions-bonus/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Some aggregators advertise $400; the live Wells Fargo offer page confirms $325."},{"id":"fifth-third-momentum-checking-300-2026","bank":{"name":"Fifth Third Bank","type":"regional_bank","chexsystems":null},"account":{"name":"Momentum Checking","category":"checking","monthly_fee":0,"fee_waiver":"Momentum Checking has no monthly service fee","personal_or_business":"personal","min_opening_deposit":0},"bonus":{"amount":300,"currency":"USD","tiers":null,"payout_days_after_completion":10,"taxable_1099int":null,"tier_mode":null},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":500,"window_days":90,"window_starts":"account_open","qualifying_notes":"Qualifying direct deposits are payroll, Social Security, pension and government benefits."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Bonus paid within 10 business days of completing the qualifying activity; account must remain open for 90 days."},"eligibility":{"cooldown_months":13,"cooldown_basis":"per_person","cooldown_notes":null,"states_included":["FL","GA","IL","IN","KY","MI","NC","OH","SC","TN","VA"],"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-09-30","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.53.com/content/fifth-third/en/mkg/checking-offer.html","aggregator_urls":["https://www.hustlermoneyblog.com/fifth-third-bank-promotions/","https://bankbonus.com/promotions/fifth-third-bank/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Low bar for a biweekly earner: one $500+ paycheck inside 90 days clears it."},{"id":"td-complete-checking-300-2026","bank":{"name":"TD Bank","type":"regional_bank","chexsystems":null},"account":{"name":"TD Complete Checking / TD Beyond Checking","category":"checking","monthly_fee":15,"fee_waiver":"TD Complete ($15/mo): waived with $500+ in direct deposits per cycle, a $500 minimum daily balance, or $5,000 combined balances. TD Beyond ($25/mo): waived with $5,000+ in direct deposits per cycle, a $2,500 minimum daily balance, or $25,000 combined balances","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":300,"currency":"USD","tiers":[{"amount":200,"condition":"Open TD Complete Checking and receive $500+ in qualifying direct deposits within 60 days of account opening","dd_cumulative":500,"dd_count":null,"min_balance":null,"window_days":60,"repeatable_cycles":null},{"amount":300,"condition":"Open TD Beyond Checking and receive $2,500+ in qualifying direct deposits within 60 days of account opening","dd_cumulative":2500,"dd_count":null,"min_balance":null,"window_days":60,"repeatable_cycles":null}],"payout_days_after_completion":180,"taxable_1099int":null,"tier_mode":"alternative"},"requirements":{"direct_deposit":{"required":true,"count":null,"min_amount_each":null,"min_amount_cumulative":2500,"window_days":60,"window_starts":"account_open","qualifying_notes":null},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Bonus is paid on or before 180 days after account opening; account must be open and in good standing at payout."},"eligibility":{"cooldown_months":12,"cooldown_basis":"per_person","cooldown_notes":null,"states_included":["CT","DC","DE","FL","MD","ME","MA","NC","NH","NJ","NY","PA","RI","SC","VT","VA"],"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-09-30","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.td.com/us/en/personal-banking/checking-and-saving-bonus","aggregator_urls":["https://www.doctorofcredit.com/best-bank-account-bonuses/","https://www.forbes.com/advisor/banking/td-bank-promotions-bonus/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"A separate $200 TD Signature Savings bonus (deposit $10,000 within 20 days, hold 90 more) can be stacked for up to $500 total."},{"id":"capital-one-360-checking-250-2026","bank":{"name":"Capital One","type":"national_bank","chexsystems":null},"account":{"name":"360 Checking","category":"checking","monthly_fee":0,"fee_waiver":"No monthly fees or minimums","personal_or_business":"personal","min_opening_deposit":0},"bonus":{"amount":250,"currency":"USD","tiers":null,"payout_days_after_completion":60,"taxable_1099int":true,"tier_mode":null},"requirements":{"direct_deposit":{"required":true,"count":2,"min_amount_each":500,"min_amount_cumulative":1000,"window_days":75,"window_starts":"account_open","qualifying_notes":"Qualifying deposits are periodic ACH or RTP payments from an employer or outside entity. Wires and internal Capital One transfers are excluded."},"min_balance":null,"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Account must be open and in good standing at deposit time; bonus expected within ~135 days of opening (75-day qualifying period plus up to 60 days processing)."},"eligibility":{"cooldown_months":null,"cooldown_basis":"per_person","cooldown_notes":"Ineligible if you had an open 360 Checking, Simply Checking or Total Control Checking account as primary or secondary holder on or after 2024-01-01.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"soft","in_branch_required":false,"promo_code":"CHECKING250"},"dates":{"deadline":null,"enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.capitalone.com/bank/checking250/","aggregator_urls":["https://www.doctorofcredit.com/capital-one-300-checking-bonus/","https://bankbonus.com/promotions/capital-one/360-checking-bonus/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"high","verified_by":"akib","content_hash":null},"data_points":[],"notes":"No published deadline \u2014 an evergreen offer. min_amount_each ($500) AND count (2) both bind here, which is the cleanest fit for a biweekly earner in the whole set."},{"id":"axos-basic-business-checking-200-2027","bank":{"name":"Axos Bank","type":"online_bank","chexsystems":true},"account":{"name":"Basic Business Checking","category":"business_checking","monthly_fee":0,"fee_waiver":"No monthly maintenance fee","personal_or_business":"business","min_opening_deposit":null},"bonus":{"amount":200,"currency":"USD","tiers":[{"amount":50,"condition":"Per statement cycle with a $3,000+ average daily balance, earnable up to 4 times across the first 5 statement cycles","dd_cumulative":null,"dd_count":null,"min_balance":3000,"window_days":30,"repeatable_cycles":4}],"payout_days_after_completion":10,"taxable_1099int":null,"tier_mode":"repeating"},"requirements":{"direct_deposit":{"required":false,"count":null,"min_amount_each":null,"min_amount_cumulative":null,"window_days":null,"window_starts":null,"qualifying_notes":null},"min_balance":{"amount":3000,"new_money":null,"fund_within_days":30,"hold_days":150},"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":null},"eligibility":{"cooldown_months":null,"cooldown_basis":null,"cooldown_notes":null,"states_included":null,"states_excluded":[],"existing_customer_allowed":null,"pull_type":"unknown","in_branch_required":false,"promo_code":"START200"},"dates":{"deadline":"2027-01-31","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://bankbonus.com/promotions/axos-bank/","aggregator_urls":["https://www.hustlermoneyblog.com/axos-bank-promotions/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"Low capital, low bonus, no DD \u2014 the floor case for the min_bonus_threshold filter."},{"id":"chase-savings-200-2026","bank":{"name":"Chase","type":"national_bank","chexsystems":null},"account":{"name":"Chase Savings","category":"savings","monthly_fee":5,"fee_waiver":"Waived with a $300 minimum daily balance; $25+ in monthly automatic transfers from a linked Chase checking account; a linked Chase Premier Plus/Sapphire checking account; or primary owner under 18","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":200,"currency":"USD","tiers":null,"payout_days_after_completion":15,"taxable_1099int":null,"tier_mode":null},"requirements":{"direct_deposit":{"required":false,"count":null,"min_amount_each":null,"min_amount_cumulative":null,"window_days":null,"window_starts":null,"qualifying_notes":null},"min_balance":{"amount":15000,"new_money":true,"fund_within_days":30,"hold_days":90},"debit_transactions":null,"bill_pay":null,"enrollment_required":true,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Deposit $15,000+ in new money within 30 days of coupon enrollment and maintain a $15,000 balance for 90 days from enrollment. The hold runs from enrollment, not from bonus payment."},"eligibility":{"cooldown_months":24,"cooldown_basis":"per_person","cooldown_notes":"One new-savings bonus every two years from the last enrollment date. Ineligible if you closed a Chase savings account within 90 days or closed one with a negative balance in the last 3 years.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"unknown","in_branch_required":false,"promo_code":null},"dates":{"deadline":"2026-10-14","enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://www.doctorofcredit.com/targeted-chase-900-checking-savings-bonus/","aggregator_urls":["https://www.mymoneyblog.com/chase-bank-900-bonus-coupon-code.html","https://www.moneysmylife.com/chase-900-checking-savings-bonus-targeted/"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"TARGETED offer \u2014 savings leg of a combined $900 checking + savings promotion. Not publicly available to everyone; no chase.com page could be retrieved."},{"id":"upgrade-rewards-checking-plus-200-2026","bank":{"name":"Upgrade","type":"neobank","chexsystems":null},"account":{"name":"Rewards Checking Plus","category":"checking","monthly_fee":0,"fee_waiver":"No monthly maintenance fee","personal_or_business":"personal","min_opening_deposit":null},"bonus":{"amount":200,"currency":"USD","tiers":null,"payout_days_after_completion":60,"taxable_1099int":null,"tier_mode":null},"requirements":{"direct_deposit":{"required":false,"count":null,"min_amount_each":null,"min_amount_cumulative":null,"window_days":60,"window_starts":"account_open","qualifying_notes":"No direct deposit required, but the account must be funded and 3 debit purchases must settle."},"min_balance":null,"debit_transactions":{"count":3,"min_amount_each":null,"window_days":60},"bill_pay":null,"enrollment_required":false,"credit_card_funding_allowed":null},"clawback":{"min_hold_days_after_bonus":null,"early_close_fee":null,"notes":"Requires applying for an Upgrade Card and, within 60 days, opening and funding Rewards Checking Plus plus 3 settled debit purchases. ATM transactions do not count. Both the card and the checking account must remain open and in good standing."},"eligibility":{"cooldown_months":null,"cooldown_basis":"per_person","cooldown_notes":"Cannot have previously opened a checking account through Upgrade.","states_included":null,"states_excluded":[],"existing_customer_allowed":false,"pull_type":"hard","in_branch_required":false,"promo_code":null},"dates":{"deadline":null,"enroll_by":null,"first_seen":"2026-08-21"},"provenance":{"source_url":"https://bankbonus.com/promotions/upgrade/rewards-checking-200-bonus/","aggregator_urls":["https://www.thewaystowealth.com/upgrade-bonus/","https://www.finder.com/banking/upgrade-bonuses"],"last_verified":"2026-08-21","verification_method":"hand_entered","confidence":"medium","verified_by":"akib","content_hash":null},"data_points":[],"notes":"The only HARD-pull offer in the set \u2014 it must contend for a scarce max_hard_pulls_per_6mo slot, which is what makes the pacing constraint visible in the plan."}].filter(o => !o.no_offer);
+const BUILT = "2026-08-21";
+
+const KEY = "bonusLadder.v1", DAY = 864e5;
+const ACH = 1, PAYOUT_FALLBACK = 60, HOLD_FALLBACK = 180, APY = 0.04;
+const DEFAULTS = {
+  state:"NY", minBonus:150, concurrent:3, capital:20000,
+  cadence:"biweekly", nextPay:"", ddAmount:2400,
+  skipBanks:"", splittable:true, business:false, chex:false, highOnly:false, totalMode:false,
+};
+let cfg, view = "plan", lastPlan = null;   // cfg is assigned after the helpers below
+
+/* ---------------------------------------------------------------- helpers */
+const iso = d => new Date(d).toISOString().slice(0,10);
+const parse = s => s ? new Date(s + "T00:00:00Z") : null;
+const addD = (d,n) => new Date(d.getTime() + n*DAY);
+function addM(d,n){ const o=new Date(d.getTime()), day=o.getUTCDate();
+  o.setUTCMonth(o.getUTCMonth()+n); if(o.getUTCDate()<day) o.setUTCDate(0); return o; }
+const money = n => "$" + Math.round(n).toLocaleString("en-US");
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const g = (o,p,f=null) => p.split(".").reduce((a,k)=> (a && a[k]!=null ? a[k] : null), o) ?? f;
+const normBank = s => String(s||"").toLowerCase()
+  .replace(/\b(bank|n\.a\.|na|inc|corp|the|federal|credit union|fcu)\b/g," ")
+  .replace(/[^a-z0-9]+/g,"");
+const pretty = d => new Date(d).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"});
+const short = d => new Date(d).toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"});
+
+function loadCfg(){
+  const base = {...DEFAULTS};
+  if(!base.nextPay){ const t=new Date(); base.nextPay = iso(addD(t, 7)); }
+  try{ const raw = localStorage.getItem(KEY); return raw ? {...base, ...JSON.parse(raw)} : base; }
+  catch(_){ return base; }
+}
+function saveCfg(){ try{ localStorage.setItem(KEY, JSON.stringify(cfg)); }catch(_){} }
+
+/* ---------------------------------------------------------------- pay dates */
+function payDates(start, cadence, end){
+  const out=[]; let c=new Date(start.getTime());
+  if(cadence==="weekly"||cadence==="biweekly"){
+    const step = cadence==="weekly"?7:14;
+    while(c<=end){ out.push(new Date(c.getTime())); c=addD(c,step); }
+  } else if(cadence==="monthly"){
+    let n=0; while(c<=end){ out.push(new Date(c.getTime())); c=addM(start,++n); }
+  } else {
+    const first = start.getUTCDate()<=15 ? start.getUTCDate() : start.getUTCDate()-15;
+    let m = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+    while(m<=end){
+      const last = new Date(Date.UTC(m.getUTCFullYear(), m.getUTCMonth()+1, 0)).getUTCDate();
+      for(const day of [first, first+15]){
+        const d = new Date(Date.UTC(m.getUTCFullYear(), m.getUTCMonth(), Math.min(day,last)));
+        if(d>=start && d<=end) out.push(d);
+      }
+      m = addM(m,1);
+    }
+    out.sort((a,b)=>a-b);
+  }
+  return out;
+}
+
+/* ---------------------------------------------------------------- tiers */
+function minCapital(o){
+  const base = g(o,"requirements.min_balance.amount",0) || 0;
+  const t = g(o,"bonus.tiers");
+  if(!t || g(o,"bonus.tier_mode")!=="alternative") return base;
+  return Math.min(...t.map(x => x.min_balance ?? base));
+}
+function variants(o, capital){
+  const tiers = g(o,"bonus.tiers"), mode = g(o,"bonus.tier_mode");
+  if(!tiers) return [[o,null]];
+  const clone = () => JSON.parse(JSON.stringify(o));
+  if(mode==="additive"){
+    const first = tiers.reduce((a,b)=> (a.window_days ?? 1e9) <= (b.window_days ?? 1e9) ? a : b);
+    const v = clone(); v.bonus.amount = first.amount;
+    const dd = v.requirements.direct_deposit;
+    if(first.dd_cumulative!=null) dd.min_amount_cumulative = first.dd_cumulative;
+    if(first.dd_count!=null) dd.count = first.dd_count;
+    if(first.window_days) dd.window_days = first.window_days;
+    const later = tiers.filter(t=>t!==first).reduce((s,t)=>s+t.amount,0);
+    return [[v, `${money(first.amount)} lands near-term; the remaining ${money(later)} only arrives if you keep the account active through every anniversary`]];
+  }
+  if(mode==="repeating"){
+    const t = tiers[0], cycles = t.repeatable_cycles || 1;
+    const v = clone(); v.bonus.amount = t.amount * cycles;
+    v.requirements.direct_deposit.window_days = Math.min((t.window_days||30)*cycles, 730);
+    return [[v, `${money(t.amount)} per statement cycle for ${cycles} cycles — a ${Math.round((t.window_days||30)*cycles/30)}-month commitment, not a one-off`]];
+  }
+  const out = [];
+  for(const t of [...tiers].sort((a,b)=>b.amount-a.amount)){
+    if(t.amount<=0) continue;
+    const need = t.min_balance ?? (g(o,"requirements.min_balance.amount",0)||0);
+    if(need && capital!=null && need>capital) continue;
+    const v = clone(); v.bonus.amount = t.amount;
+    const dd = v.requirements.direct_deposit;
+    if(t.dd_cumulative!=null){ dd.min_amount_cumulative = t.dd_cumulative; dd.required = true; }
+    if(t.dd_count!=null) dd.count = t.dd_count;
+    if(t.window_days) dd.window_days = t.window_days;
+    if(need){
+      v.requirements.min_balance = Object.assign({fund_within_days:t.window_days, hold_days:null},
+        v.requirements.min_balance||{}, {amount:need});
+    } else if(t.dd_cumulative!=null){ v.requirements.min_balance = null; }
+    const note = t.amount !== g(o,"bonus.amount")
+      ? `planned at the ${money(t.amount)} tier rather than the ${money(g(o,"bonus.amount"))} headline — ${t.condition}` : null;
+    out.push([v,note]);
+  }
+  return out.length ? out : [[o,null]];
+}
+
+/* ---------------------------------------------------------------- filters */
+function hardFilter(o, today){
+  const dl = parse(g(o,"dates.deadline"));
+  if(dl && dl < today) return `the offer closed on ${pretty(dl)}`;
+  const eb = parse(g(o,"dates.enroll_by"));
+  if(eb && eb < today) return `enrollment closed on ${pretty(eb)}`;
+  const amt = g(o,"bonus.amount",0);
+  if(amt < cfg.minBonus) return `${money(amt)} is under your ${money(cfg.minBonus)} floor`;
+  const st = (cfg.state||"").toUpperCase();
+  const inc = g(o,"eligibility.states_included");
+  if(inc && st && !inc.includes(st)) return `not offered in ${st} — only ${inc.join(", ")}`;
+  if((g(o,"eligibility.states_excluded")||[]).includes(st)) return `explicitly excluded in ${st}`;
+  if(g(o,"account.personal_or_business")==="business" && !cfg.business)
+    return "a business account — turn those on in the sidebar to include it";
+  if(cfg.chex && g(o,"bank.chexsystems")===true) return "this bank pulls ChexSystems";
+  const skips = String(cfg.skipBanks||"").split(",").map(normBank).filter(Boolean);
+  const bank = g(o,"bank.name","");
+  if(skips.some(x => normBank(bank)===x || normBank(bank).includes(x)))
+    return `you told me to skip ${bank}`;
+  if(cfg.highOnly && g(o,"provenance.confidence")!=="high") return "the terms aren't confirmed on the bank's own site";
+  const need = minCapital(o);
+  if(need && cfg.capital!=null && need>cfg.capital)
+    return `even the cheapest path needs ${money(need)} parked; you set ${money(cfg.capital)}`;
+  return null;
+}
+
+function feasibility(o, open, pays, ddAmt){
+  const dd = g(o,"requirements.direct_deposit",{}) || {};
+  const caveats = [];
+  const openBy = [parse(g(o,"dates.deadline")), parse(g(o,"dates.enroll_by"))].filter(Boolean).sort((a,b)=>a-b)[0] || null;
+  if(openBy && open > openBy) return {ok:false, reason:`it has to be open by ${pretty(openBy)}`};
+
+  if(!dd.required){
+    const mb = g(o,"requirements.min_balance") || {};
+    const fund = mb.fund_within_days || 30;
+    caveats.push(mb.amount
+      ? `park ${money(mb.amount)} within ${fund} days${mb.hold_days?` and leave it there ${mb.hold_days} days`:""}`
+      : "no direct deposit required");
+    const done = addD(open, fund);
+    return {ok:true, windowStart:open, windowEnd:done, ddDates:[], ddEach:0, required:0, completion:done, caveats};
+  }
+  if(!dd.window_days) return {ok:false, reason:"the bank never states how long you have to meet the requirement"};
+
+  const earliest = addD(open, ACH);
+  let start = open;
+  if(dd.window_starts === "first_deposit"){
+    const first = pays.find(d => d >= earliest);
+    if(!first) return {ok:false, reason:"no payday lands after that opening date"};
+    start = first;
+  } else if(!dd.window_starts){
+    caveats.push("the bank doesn't say when the clock starts — this assumes it runs from the day you open");
+  }
+  const end = addD(start, dd.window_days);
+  if(dd.min_amount_each && ddAmt < dd.min_amount_each)
+    return {ok:false, reason:`each deposit has to be ${money(dd.min_amount_each)}; you'd have ${money(ddAmt)} per payday`};
+
+  let required = dd.count || 0;
+  if(dd.min_amount_cumulative){
+    if(ddAmt<=0) return {ok:false, reason:"no direct deposit amount to work with"};
+    required = Math.max(required, Math.ceil(dd.min_amount_cumulative/ddAmt));
+  }
+  required = Math.max(required,1);
+  const inWin = pays.filter(d => d>=start && d<=end && d>=earliest);
+  if(inWin.length < required)
+    return {ok:false, reason:`it wants ${required} deposits of ${money(ddAmt)} inside ${dd.window_days} days; your schedule gives ${inWin.length}`};
+
+  const ddDates = inWin.slice(0,required);
+  if(dd.min_amount_cumulative && required > (dd.count||0))
+    caveats.push(`${money(dd.min_amount_cumulative)} total means ${required} deposit${required===1?"":"s"} at ${money(ddAmt)} each`);
+  const debit = g(o,"requirements.debit_transactions");
+  if(debit && debit.count){
+    const w = debit.window_days || dd.window_days;
+    caveats.push(`${debit.count} debit card purchases in ${w} days — roughly one every ${Math.round(w/debit.count)} days`);
+  }
+  const mb = g(o,"requirements.min_balance");
+  if(mb && mb.amount) caveats.push(`also park ${money(mb.amount)}`);
+  if(g(o,"requirements.enrollment_required")) caveats.push("you have to enroll in the offer separately from opening the account");
+  if(g(o,"eligibility.in_branch_required")) caveats.push("requires a branch visit");
+  const fee = g(o,"account.monthly_fee");
+  if(fee) caveats.push(`${money(fee)}/month fee — ${g(o,"account.fee_waiver") || "no waiver stated"}`);
+  const qn = g(o,"requirements.direct_deposit.qualifying_notes");
+  if(qn) caveats.push(qn);
+
+  return {ok:true, windowStart:start, windowEnd:end, ddDates, ddEach:ddAmt, required, completion:ddDates[ddDates.length-1], caveats};
+}
+
+function score(o, feas, open){
+  const amt = g(o,"bonus.amount",0);
+  const days = Math.max(Math.round((feas.completion-open)/DAY),1);
+  const mb = g(o,"requirements.min_balance") || {};
+  const parked = mb.amount ? mb.amount*APY*(((mb.hold_days||90)+(mb.fund_within_days||0))/365) : 0;
+  const eff = (amt-parked)/(days/7);
+  let pen=0; const why=[];
+  if(g(o,"eligibility.pull_type")==="hard"){ pen+=15; why.push("hard credit pull"); }
+  const chex = g(o,"bank.chexsystems");
+  if(chex===true){ pen+=8; why.push("pulls ChexSystems"); }
+  else if(chex===null){ pen+=3; why.push("ChexSystems behaviour unknown"); }
+  const conf = g(o,"provenance.confidence");
+  if(conf==="low"){ pen+=12; why.push("unverified terms"); }
+  else if(conf==="medium"){ pen+=4; why.push("terms from an aggregator"); }
+  if(!g(o,"requirements.direct_deposit.window_starts") && g(o,"requirements.direct_deposit.required")){
+    pen+=6; why.push("unclear window start");
+  }
+  return {score:eff-pen, efficiency:eff, penalty:pen, reasons:why, days, parked, net:amt-parked};
+}
+
+/* ---------------------------------------------------------------- plan */
+function buildPlan(){
+  const today = new Date(new Date().toISOString().slice(0,10)+"T00:00:00Z");
+  const horizon = addD(today, 365);
+  let next = parse(cfg.nextPay) || addD(today,7);
+  if(next < today){
+    const step = {weekly:7, biweekly:14}[cfg.cadence];
+    next = step ? addD(next, step*Math.ceil((today-next)/DAY/step)) : addM(next,1);
+  }
+  const pays = payDates(next, cfg.cadence, addD(horizon,400));
+  const rejected = [], candidates = [];
+  for(const o of OFFERS){
+    const r = hardFilter(o, today);
+    if(r) rejected.push({offer:o, reason:r, stage:"filter"}); else candidates.push(o);
+  }
+
+  const dedicated = Number(cfg.ddAmount) || 0;
+  const ranked = [];
+  for(const o of candidates){
+    let best=null, lastReason="", floorReason="";
+    for(const [v,note] of variants(o, cfg.capital)){
+      const reachable = g(v,"bonus.amount",0);
+      if(reachable < cfg.minBonus){
+        floorReason = floorReason || `the ${money(reachable)} tier is under your ${money(cfg.minBonus)} floor`;
+        continue;
+      }
+      const f = feasibility(v, addD(today,1), pays, dedicated);
+      if(!f.ok){ lastReason = lastReason || f.reason; continue; }
+      const s = score(v, f, addD(today,1));
+      const key = cfg.totalMode ? s.net : s.score;
+      if(!best || key > best.key) best = {v, s, note, key};
+    }
+    if(!best) rejected.push({offer:o, stage:"infeasible",
+      reason: [lastReason, floorReason].filter(Boolean).join("; and ") || "no tier you can reach"});
+    else ranked.push({offer:o, ...best});
+  }
+  ranked.sort((a,b)=> (cfg.totalMode ? b.s.net-a.s.net : b.s.score-a.s.score));
+
+  const maxSplit = cfg.splittable ? 2 : 1;
+  const picked = [];
+  for(const e of ranked){
+    const o = e.v;
+    const needsDD = !!g(o,"requirements.direct_deposit.required");
+    const needsCap = g(o,"requirements.min_balance.amount",0) || 0;
+    const openBy = [parse(g(o,"dates.deadline")), parse(g(o,"dates.enroll_by"))].filter(Boolean).sort((a,b)=>a-b)[0] || horizon;
+    const limit = openBy < horizon ? openBy : horizon;
+    let cur = addD(today,1), placed=null, blocker="deposit timing", lastReason="";
+    while(cur <= limit){
+      const active = picked.filter(s => s.openDate<=cur && cur<s.bonusPost);
+      if(active.length >= cfg.concurrent){
+        blocker = `your limit of ${cfg.concurrent} account${cfg.concurrent===1?"":"s"} at a time`;
+        cur = active.map(s=>s.bonusPost).sort((a,b)=>a-b)[0] || addD(cur,1); continue;
+      }
+      if(needsCap && cfg.capital!=null){
+        const used = picked.filter(s=>s.openDate<=cur && cur<s.capitalFree).reduce((n,s)=>n+s.capital,0);
+        if(used+needsCap > cfg.capital){ blocker="cash already committed to better-paying offers"; cur=addD(cur,7); continue; }
+      }
+      let share = dedicated;
+      if(needsDD){
+        const dds = active.filter(s=>s.needsDD);
+        if(dds.length >= maxSplit){
+          blocker = `only ${maxSplit} account${maxSplit===1?"":"s"} can be fed per pay cycle`;
+          const nx = dds.map(s=>s.completion).sort((a,b)=>a-b)[0];
+          cur = nx && nx>cur ? addD(nx,1) : addD(cur,1); continue;
+        }
+        if(cfg.splittable && dds.length) share = dedicated/(dds.length+1);
+      }
+      const f = feasibility(o, cur, pays, share);
+      if(f.ok){ placed = {cur,f,share}; break; }
+      lastReason = f.reason || lastReason; cur = addD(cur,1);
+    }
+    if(!placed){
+      rejected.push({offer:e.offer, stage:"unslotted",
+        reason: blocker==="deposit timing" && lastReason ? lastReason : `no opening date fits — held up by ${blocker}`});
+      continue;
+    }
+    const {cur:openDate, f, share} = placed;
+    const payoutDays = g(o,"bonus.payout_days_after_completion");
+    const hold = g(o,"clawback.min_hold_days_after_bonus");
+    const bonusPost = addD(f.completion, payoutDays ?? PAYOUT_FALLBACK);
+    const safeClose = addD(bonusPost, hold ?? HOLD_FALLBACK);
+    const mb = g(o,"requirements.min_balance") || {};
+    const caveats = [...f.caveats];
+    if(e.note) caveats.unshift(e.note);
+    if(payoutDays==null) caveats.push(`the bank doesn't publish payout timing — this assumes ${PAYOUT_FALLBACK} days`);
+    if(hold==null) caveats.push(`no hold period published — assume ${HOLD_FALLBACK} days before closing is safe`);
+    if(g(o,"clawback.early_close_fee")) caveats.push(`${money(g(o,"clawback.early_close_fee"))} fee if you close early`);
+    if(g(o,"provenance.confidence")!=="high") caveats.push("confirm these terms with the bank before you open");
+    if(share < dedicated) caveats.push(`assumes a split paycheck — ${money(share)} of it goes here`);
+    const cd = g(o,"eligibility.cooldown_months");
+    picked.push({
+      id:o.id, bank:g(o,"bank.name"), account:g(o,"account.name"),
+      amount:g(o,"bonus.amount",0), headline:g(e.offer,"bonus.amount",0),
+      promo:g(o,"eligibility.promo_code"), url:g(o,"provenance.source_url"),
+      confidence:g(o,"provenance.confidence"), verified:g(o,"provenance.last_verified"),
+      openDate, openBy, windowStart:f.windowStart, windowEnd:f.windowEnd,
+      ddDates:f.ddDates, ddEach:f.ddEach, required:f.required, needsDD,
+      completion:f.completion, bonusPost, safeClose,
+      cooldownEnds: cd ? addM(bonusPost, cd) : null,
+      capital:needsCap,
+      capitalFree: needsCap ? addD(openDate,(mb.fund_within_days||0)+(mb.hold_days||0)) : openDate,
+      caveats, ...score(o,f,openDate),
+    });
+  }
+  picked.sort((a,b)=>a.openDate-b.openDate);
+  return {selected:picked, rejected, today, horizon};
+}
+
+/* ---------------------------------------------------------------- render */
+function renderFigures(p){
+  const gross = p.selected.reduce((s,i)=>s+i.amount,0);
+  const last = p.selected.length ? new Date(Math.max(...p.selected.map(i=>+i.bonusPost))) : p.today;
+  const weeks = Math.max((last-p.today)/DAY/7, 1);
+  const soonest = p.selected[0];
+  const tiles = [
+    {v:money(gross), k:"you'd bank", n: p.selected.length ? `by ${pretty(last)}` : "nothing qualifies yet", lead:true},
+    {v:String(p.selected.length), k:"accounts to open", n:`out of ${OFFERS.length} tracked`},
+    {v:money(p.selected.length ? gross/weeks : 0), k:"per week", n:`over ${Math.round(weeks)} weeks`},
+    {v: soonest ? short(soonest.openDate) : "—", k:"first move", n: soonest ? `open ${soonest.bank}` : "adjust your filters"},
+  ];
+  document.getElementById("figures").innerHTML = tiles.map(t =>
+    `<div class="fig${t.lead?" lead":""}"><span class="v">${esc(t.v)}</span><span class="k">${esc(t.k)}</span><span class="n">${esc(t.n)}</span></div>`).join("");
+  document.getElementById("cPlan").textContent = p.selected.length;
+  document.getElementById("cAll").textContent = OFFERS.length;
+  document.getElementById("cWhy").textContent = p.rejected.length;
+}
+
+function renderSchedule(p){
+  if(!p.selected.length) return "";
+  const start = p.today;
+  const end = new Date(Math.max(...p.selected.map(i=>+i.safeClose)));
+  const span = Math.max(end-start, DAY);
+  const pct = d => ((new Date(d)-start)/span)*100;
+  const months = [];
+  let m = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+  while(m <= end){
+    if(m >= start) months.push(m);
+    m = addM(m,1);
+  }
+  const axis = months.map(d =>
+    `<span style="left:${pct(d).toFixed(3)}%">${new Date(d).toLocaleDateString("en-US",{month:"short",timeZone:"UTC"})}${d.getUTCMonth()===0?" "+d.getUTCFullYear():""}</span>`).join("");
+
+  const lanes = p.selected.map(i => {
+    const a = pct(i.openDate), b = pct(i.completion), c = pct(i.bonusPost), d = pct(i.safeClose);
+    const ticks = i.ddDates.map(t =>
+      `<i class="tick" style="left:${pct(t).toFixed(3)}%" title="Deposit due ${pretty(t)}"></i>`).join("");
+    return `<div class="lane">
+      <div class="who"><b>${esc(i.bank)}</b> ${esc(i.account)}</div>
+      <div class="track">
+        <div class="seg hold" style="left:${c.toFixed(3)}%;width:${Math.max(d-c,0.4).toFixed(3)}%" title="Hold period — closing before ${pretty(i.safeClose)} risks a clawback"></div>
+        <div class="seg wait" style="left:${b.toFixed(3)}%;width:${Math.max(c-b,0.4).toFixed(3)}%" title="Waiting for the bonus to post"></div>
+        <div class="seg win" style="left:${a.toFixed(3)}%;width:${Math.max(b-a,0.6).toFixed(3)}%" title="Requirement window"></div>
+        ${ticks}
+        <div class="pin" style="left:${c.toFixed(3)}%">${esc(money(i.amount))}</div>
+      </div></div>`;
+  }).join("");
+
+  return `<section class="schedule" style="--lane:190px">
+    <div class="sched-scroll"><div class="sched-inner">
+      <div class="axis">${axis}</div>${lanes}
+    </div></div>
+    <div class="legend">
+      <span><i class="chip win"></i>meeting the requirement</span>
+      <span><i class="chip wait"></i>waiting for the bonus</span>
+      <span><i class="chip hold"></i>hold it open or lose the bonus</span>
+      <span style="font-family:var(--mono);font-size:.72rem">| = a deposit has to land</span>
+    </div></section>`;
+}
+
+function renderNext(p){
+  const soon = [];
+  for(const i of p.selected){
+    soon.push({when:i.openDate, what:`Open <b>${esc(i.bank)} ${esc(i.account)}</b>${i.promo?` with code <span class="tag code">${esc(i.promo)}</span>`:""}`});
+    i.ddDates.forEach((d,n)=> soon.push({when:d, what:`Deposit #${n+1} of ${money(i.ddEach)} must land at ${esc(i.bank)}`}));
+    if(i.capital) soon.push({when:i.openDate, what:`Move ${money(i.capital)} into ${esc(i.bank)}`});
+  }
+  const cutoff = addD(p.today, 45);
+  const list = soon.filter(s => s.when <= cutoff).sort((a,b)=>a.when-b.when).slice(0,7);
+  if(!list.length) return "";
+  return `<section class="next"><h3>Next 45 days</h3><ul>${list.map(s=>{
+    const days = Math.round((s.when-p.today)/DAY);
+    return `<li><time>${esc(short(s.when))}</time><span>${s.what}</span>
+      <span class="in">${days<=0?"today":`in ${days}d`}</span></li>`;}).join("")}</ul></section>`;
+}
+
+function renderLadder(p){
+  if(!p.selected.length) return `<div class="sheet"><div class="empty"><b>Nothing clears your filters.</b>
+    Check the “Why not” tab — it's usually the state, the minimum bonus, or the size of your paycheck.</div></div>`;
+  const cards = p.selected.map((i,n) => {
+    const steps = [];
+    steps.push([short(i.openDate), `Open the account${i.promo?` — code <span class="tag code">${esc(i.promo)}</span>`:""}
+      <span class="fine">offer closes ${pretty(i.openBy)}</span>`]);
+    if(i.needsDD) i.ddDates.forEach((d,k)=> steps.push([short(d),
+      `Deposit #${k+1} of <b>${money(i.ddEach)}</b> must land`]));
+    if(i.capital) steps.push([short(i.openDate), `Park ${money(i.capital)} <span class="fine">free again ${pretty(i.capitalFree)}</span>`]);
+    steps.push([short(i.bonusPost), `Bonus should post <span class="fine">chase the bank if it hasn't</span>`]);
+    steps.push([short(i.safeClose), `Safe to close${i.cooldownEnds?` <span class="fine">eligible again ${pretty(i.cooldownEnds)}</span>`:""}`]);
+    return `<article class="card">
+      <div class="card-top">
+        <span class="rung">${String(n+1).padStart(2,"0")}</span>
+        <div><h3>${esc(i.bank)} — ${esc(i.account)}</h3>
+          <div class="sub"><span class="tag ${esc(i.confidence)}">${esc(i.confidence)}</span>
+          ${money(i.efficiency)}/week${i.reasons.length?` · ${esc(i.reasons.join(" · "))}`:""}</div></div>
+        <div class="amt"><b>${esc(money(i.amount))}</b>${i.headline!==i.amount?`<s>of ${esc(money(i.headline))} headline</s>`:""}</div>
+      </div>
+      <ol class="steps">${steps.map(([t,txt])=>`<li><time>${esc(t)}</time><span>${txt}</span></li>`).join("")}</ol>
+      <div class="notes">${i.caveats.map(c=>`<p>${esc(c)}</p>`).join("")}
+        <div class="src"><a href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">Read the terms at the source</a>
+        <span style="color:var(--ink-3)"> · verified ${esc(i.verified||"—")}</span></div></div>
+    </article>`;
+  }).join("");
+  return renderSchedule(p) + renderNext(p) + cards;
+}
+
+function renderAll(){
+  const rows = [...OFFERS].sort((a,b)=> g(b,"bonus.amount",0)-g(a,"bonus.amount",0)).map(o=>{
+    const dd = g(o,"requirements.direct_deposit",{}) || {};
+    let req = "—";
+    if(dd.required){
+      req = dd.min_amount_cumulative ? `${money(dd.min_amount_cumulative)} in deposits`
+          : dd.min_amount_each ? `${dd.count||1} x ${money(dd.min_amount_each)}` : "direct deposit";
+      if(dd.window_days) req += ` in ${dd.window_days}d`;
+    } else if(g(o,"requirements.min_balance.amount")){
+      req = `${money(g(o,"requirements.min_balance.amount"))} balance`;
+    }
+    const inc = g(o,"eligibility.states_included");
+    return `<tr>
+      <td><b>${esc(g(o,"bank.name"))}</b><span class="sub">${esc(g(o,"account.name"))}</span></td>
+      <td class="n">${esc(money(g(o,"bonus.amount",0)))}</td>
+      <td>${esc(req)}<span class="sub">${esc(dd.window_starts ? "from "+dd.window_starts.replace(/_/g," ") : dd.required ? "start unstated" : "")}</span></td>
+      <td>${inc ? esc(inc.join(" ")) : "nationwide"}</td>
+      <td class="n">${esc(g(o,"dates.deadline") || "open-ended")}</td>
+      <td><span class="tag ${esc(g(o,"provenance.confidence"))}">${esc(g(o,"provenance.confidence"))}</span>
+        <span class="sub">${esc(g(o,"provenance.last_verified"))}</span></td></tr>`;
+  }).join("");
+  return `<div class="sheet"><h3>Every tracked offer <em>— ${OFFERS.length}, regardless of whether it fits you</em></h3>
+    <div class="tw"><table><thead><tr><th>Bank</th><th class="n">Bonus</th><th>What it takes</th>
+    <th>Where</th><th class="n">Closes</th><th>Source</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function renderWhy(p){
+  const heads = {
+    unslotted:["No room on your calendar","These fit your situation, but every opening date collided with a limit you set."],
+    infeasible:["Your paycheck can't reach them","The requirement is real money on a real clock, and the arithmetic doesn't close."],
+    filter:["Ruled out up front","Wrong state, too small, wrong account type, or you're inside a cooldown."],
+  };
+  const blocks = ["unslotted","infeasible","filter"].map(stage=>{
+    const items = p.rejected.filter(r=>r.stage===stage);
+    if(!items.length) return "";
+    const rows = items.sort((a,b)=> g(b.offer,"bonus.amount",0)-g(a.offer,"bonus.amount",0)).map(r=>
+      `<tr><td><b>${esc(g(r.offer,"bank.name"))}</b><span class="sub">${esc(g(r.offer,"account.name"))}</span></td>
+       <td class="n">${esc(money(g(r.offer,"bonus.amount",0)))}</td>
+       <td class="reason">${esc(r.reason)}</td></tr>`).join("");
+    return `<div class="sheet"><h3>${esc(heads[stage][0])} <em>— ${items.length}. ${esc(heads[stage][1])}</em></h3>
+      <div class="tw"><table><thead><tr><th>Bank</th><th class="n">Bonus</th><th>Why it isn't in your ladder</th></tr></thead>
+      <tbody>${rows}</tbody></table></div></div>`;
+  }).join("");
+  return blocks || `<div class="sheet"><div class="empty"><b>Everything made the ladder.</b>Nothing was ruled out.</div></div>`;
+}
+
+function planAsText(p){
+  const lines = [`BONUS LADDER — generated ${iso(p.today)}`,
+    `${p.selected.length} accounts, ${money(p.selected.reduce((s,i)=>s+i.amount,0))} total`, ""];
+  p.selected.forEach((i,n)=>{
+    lines.push(`${n+1}. ${i.bank} — ${i.account}  ${money(i.amount)}`);
+    lines.push(`   open ${iso(i.openDate)} (closes ${iso(i.openBy)})${i.promo?`  code ${i.promo}`:""}`);
+    i.ddDates.forEach((d,k)=> lines.push(`   deposit #${k+1} of ${money(i.ddEach)} by ${iso(d)}`));
+    if(i.capital) lines.push(`   park ${money(i.capital)} until ${iso(i.capitalFree)}`);
+    lines.push(`   bonus posts ${iso(i.bonusPost)}; safe to close ${iso(i.safeClose)}`);
+    i.caveats.forEach(c=> lines.push(`   ! ${c}`));
+    lines.push(`   ${i.url}`, "");
+  });
+  lines.push("Not financial advice. Verify every requirement with the bank.");
+  return lines.join("\n");
+}
+
+function render(){
+  const p = lastPlan = buildPlan();
+  renderFigures(p);
+  document.getElementById("view").innerHTML =
+    view==="plan" ? renderLadder(p) : view==="all" ? renderAll() : renderWhy(p);
+}
+
+/* ---------------------------------------------------------------- wiring */
+function bind(){
+  const text = ["state","cadence","nextPay","skipBanks"], nums = ["minBonus","concurrent","capital","ddAmount"];
+  for(const id of [...text,...nums]){
+    const el = document.getElementById(id);
+    el.value = cfg[id];
+    el.addEventListener("change", ()=>{
+      cfg[id] = nums.includes(id) ? Number(el.value)
+              : id==="state" ? el.value.toUpperCase().slice(0,2) : el.value;
+      if(id==="state") el.value = cfg.state;
+      saveCfg(); render();
+    });
+  }
+  for(const id of ["splittable","business","chex","highOnly","totalMode"]){
+    const el = document.getElementById(id);
+    el.checked = !!cfg[id];
+    el.addEventListener("change", ()=>{ cfg[id]=el.checked; saveCfg(); render(); });
+  }
+  document.getElementById("reset").addEventListener("click", ()=>{
+    cfg = {...DEFAULTS, nextPay: iso(addD(new Date(),7))};
+    saveCfg(); bindValues(); render();
+  });
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.addEventListener("click", ()=>{
+      view = t.dataset.view;
+      document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", String(x===t)));
+      render();
+    });
+  });
+  const copy = document.getElementById("copyPlan");
+  copy.addEventListener("click", async ()=>{
+    const text = planAsText(lastPlan || buildPlan());
+    try{ await navigator.clipboard.writeText(text); copy.textContent = "Copied"; }
+    catch(_){ copy.textContent = "Couldn't copy — select the page instead"; }
+    setTimeout(()=>{ copy.textContent = "Copy the ladder as text"; }, 2200);
+  });
+}
+function bindValues(){
+  for(const id of ["state","cadence","nextPay","skipBanks","minBonus","concurrent","capital","ddAmount"])
+    document.getElementById(id).value = cfg[id];
+  for(const id of ["splittable","business","chex","highOnly","totalMode"])
+    document.getElementById(id).checked = !!cfg[id];
+}
+
+cfg = loadCfg();
+const verified = OFFERS.map(o=>g(o,"provenance.last_verified")).filter(Boolean).sort();
+document.getElementById("stampCount").textContent = `${OFFERS.length} offers tracked`;
+document.getElementById("stampDate").textContent = `data refreshed ${verified[verified.length-1] || BUILT}`;
+bind();
+render();
+})();
+</script>
+
+</body>
+</html>

@@ -67,6 +67,7 @@ discover.py ──► extract.py ──► validate.py ──► CI
 | `scripts/calendar.py` | One VEVENT per action, plus the 1099-INT tax summary. |
 | `scripts/report.py` | The table above, plus every rejection reason. |
 | `scripts/build_dist.py` | Bundles `dist/offers.json`, `.csv`, `.rss.xml`, `stats.json`. |
+| `scripts/build_ui.py` | Inlines the offers into `web/bonus-ladder.html` — one file, no server. |
 | `scripts/issue_to_offer.py` | Turns a GitHub issue form into a draft offer JSON. No LLM — the form already imposed the structure. |
 
 ## What the planner actually knows
@@ -138,14 +139,26 @@ Also `dist/offers.csv`, `dist/offers.rss.xml` (new offers) and `dist/stats.json`
 Extraction is hash-diffed, so steady-state runs make near-zero model calls. Set
 `ANTHROPIC_API_KEY` as a **repository secret** — never in a file that git can see.
 
-## Web UI
+## The interface
 
-`web/` is a zero-build static page that reads `dist/offers.json` and runs the same planning
-logic in the browser. Config lives in `localStorage`; nothing is uploaded, because there is
+**`web/bonus-ladder.html` — double-click it.** One self-contained file: every offer is
+inlined, so there's no server, no build step and no Python. It runs the same filters,
+feasibility check, scoring and slotting as `planner.py`, and adds a dated schedule chart
+showing each account's requirement window, the wait for the bonus, and the hold period you
+can't close inside. Settings live in `localStorage` — nothing is uploaded, because there is
 nowhere to upload it to.
 
+Rebuild it whenever the offer data changes:
+
 ```bash
-python -m scripts.build_dist && python -m http.server -d . 8000
+python -m scripts.build_ui        # web/ladder/* + offers/*.json -> web/bonus-ladder.html
+```
+
+`web/index.html` is the older, lighter page that fetches `dist/offers.json` at runtime —
+useful if you want the data served separately rather than baked in:
+
+```bash
+python -m scripts.build_dist && python -m http.server 8000
 # then open http://localhost:8000/web/
 ```
 
