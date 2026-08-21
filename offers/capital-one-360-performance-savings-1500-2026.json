@@ -1,0 +1,107 @@
+{
+  "id": "capital-one-360-performance-savings-1500-2026",
+  "bank": {
+    "name": "Capital One",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "360 Performance Savings",
+    "category": "savings",
+    "monthly_fee": 0,
+    "fee_waiver": "No monthly fees",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 1500,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 300,
+        "condition": "Deposit $20,000-$49,999.99 within 15 days of account opening and hold 90 days",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 20000,
+        "window_days": 15,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 750,
+        "condition": "Deposit $50,000-$99,999.99 within 15 days of account opening and hold 90 days",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 50000,
+        "window_days": 15,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 1500,
+        "condition": "Deposit $100,000+ within 15 days of account opening and hold 90 days",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 100000,
+        "window_days": 15,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 60,
+    "taxable_1099int": true,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": false,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": null,
+      "window_days": null,
+      "window_starts": null,
+      "qualifying_notes": null
+    },
+    "min_balance": {
+      "amount": 20000,
+      "new_money": true,
+      "fund_within_days": 15,
+      "hold_days": 90
+    },
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": false
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": 0,
+    "notes": "Balance must be held 90 days after the close of the 15-day funding window; no early closure penalty reported."
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Ineligible if you held a 360 Performance Savings, 360 Savings, 360 Money Market, Savings Now or Confidence Savings account as primary or secondary holder on or after 2024-01-01.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "soft",
+    "in_branch_required": false,
+    "promo_code": "BONUS1500"
+  },
+  "dates": {
+    "deadline": null,
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.doctorofcredit.com/capital-one-300-1500-savings-bonus-requires-20000-100000-deposit/",
+    "aggregator_urls": [
+      "https://bankbonus.com/promotions/capital-one/360-savings-1000-bonus/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Pure capital play, no DD. The planner gates this on profile.max_liquid_capital — the lowest tier already needs $20,000."
+}

@@ -1,0 +1,94 @@
+{
+  "id": "axos-business-premium-savings-600-2027",
+  "bank": {
+    "name": "Axos Bank",
+    "type": "online_bank",
+    "chexsystems": true
+  },
+  "account": {
+    "name": "Business Premium Savings + Basic Business Checking",
+    "category": "business_checking",
+    "monthly_fee": 0,
+    "fee_waiver": "No monthly maintenance fee",
+    "personal_or_business": "business",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 600,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 100,
+        "condition": "Per qualifying statement cycle: deposit $1,000+ via ACH/check/wire into checking, make 2+ debit purchases of $50+, keep $1,500+ average daily balance in checking and $50,000+ in Business Premium Savings",
+        "dd_cumulative": 1000,
+        "dd_count": null,
+        "min_balance": 50000,
+        "window_days": 30,
+        "repeatable_cycles": 6
+      }
+    ],
+    "payout_days_after_completion": 15,
+    "taxable_1099int": null,
+    "tier_mode": "repeating"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": false,
+      "count": null,
+      "min_amount_each": 1000,
+      "min_amount_cumulative": null,
+      "window_days": 30,
+      "window_starts": "account_open",
+      "qualifying_notes": "Deposits may be ACH, check or wire — not restricted to payroll direct deposit."
+    },
+    "min_balance": {
+      "amount": 50000,
+      "new_money": true,
+      "fund_within_days": 30,
+      "hold_days": 210
+    },
+    "debit_transactions": {
+      "count": 2,
+      "min_amount_each": 50,
+      "window_days": 30
+    },
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": false
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": 50,
+    "notes": "$50 early closure fee if closed within 180 days. Both accounts must be opened through a single bundled application. The $100 is earnable in up to 6 of the first 7 statement cycles."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "New customers only; cannot have qualified for any Axos promotion in the 12 months prior to opening.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "soft",
+    "in_branch_required": false,
+    "promo_code": "SBB600"
+  },
+  "dates": {
+    "deadline": "2027-01-31",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.doctorofcredit.com/axos-bank-600-business-checking-savings-bonus/",
+    "aggregator_urls": [
+      "https://bankbonus.com/promotions/axos-bank/",
+      "https://www.hustlermoneyblog.com/axos-bank-business-premium-savings-review/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Repeating tier: $100 per qualifying statement cycle, up to 6 of the first 7 cycles = $600. bonus.amount is the full $600 but the timeline is ~6 months, not one cycle."
+}

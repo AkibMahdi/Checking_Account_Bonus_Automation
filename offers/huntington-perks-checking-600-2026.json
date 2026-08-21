@@ -1,0 +1,116 @@
+{
+  "id": "huntington-perks-checking-600-2026",
+  "bank": {
+    "name": "Huntington Bank",
+    "type": "regional_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Perks Checking / Platinum Perks Checking",
+    "category": "checking",
+    "monthly_fee": 10,
+    "fee_waiver": "Perks ($10/mo): waived with $1,000+ in monthly deposits or $5,000 total relationship balance. Platinum Perks ($25/mo): waived with $25,000 total relationship balance",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 600,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 400,
+        "condition": "Open Perks Checking and receive qualifying direct deposits totaling $500+ within 90 days of account opening",
+        "dd_cumulative": 500,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 600,
+        "condition": "Open Platinum Perks Checking and make total new money deposits of at least $25,000 within 90 days (no direct deposit required)",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 25000,
+        "window_days": 90,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 14,
+    "taxable_1099int": null,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 500,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": "P2P transfers (PayPal, Zelle, Venmo), Real-Time Payments and transfers from other Huntington accounts do not count."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Account must remain open a minimum of 90 days."
+  },
+  "eligibility": {
+    "cooldown_months": 24,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": null,
+    "states_included": [
+      "AL",
+      "AR",
+      "CO",
+      "FL",
+      "GA",
+      "IL",
+      "IN",
+      "KY",
+      "LA",
+      "MI",
+      "MN",
+      "MS",
+      "MO",
+      "NC",
+      "OH",
+      "PA",
+      "SC",
+      "TN",
+      "TX",
+      "WV",
+      "WI"
+    ],
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-09-30",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.huntington.com/checking-account-promotions-bonuses-offers",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/best-bank-account-bonuses/",
+      "https://www.hustlermoneyblog.com/huntington-bank-promotions/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "The $600 tier is balance-driven, not DD-driven — the $400 Perks tier is the one a biweekly earner actually plans around."
+}

@@ -1,0 +1,75 @@
+{
+  "id": "wells-fargo-everyday-checking-325-2026",
+  "bank": {
+    "name": "Wells Fargo",
+    "type": "national_bank",
+    "chexsystems": true
+  },
+  "account": {
+    "name": "Everyday Checking",
+    "category": "checking",
+    "monthly_fee": 15,
+    "fee_waiver": "Waived per fee period with $500+ in qualifying electronic deposits, a $1,500 minimum daily balance, $5,000+ in combined Wells Fargo deposit and investment balances, primary owner age 17-24, or qualifying military direct deposit",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 325,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 30,
+    "taxable_1099int": null,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 1000,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": "Qualifying deposits include ACH direct deposits, RTP/FedNow instant payments, and electronic credits from third-party services over the Visa/Mastercard networks."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Account must remain open through the date the bonus is deposited. Accounts with zero balances may be closed without notice."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Ineligible if you received a Wells Fargo checking bonus in the past 12 months. Employees, non-resident aliens, foreign entities and Private Bank accounts excluded. Cannot be combined with other checking promotions.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-10-13",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://accountoffers.wellsfargo.com/checkingoffer/",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/wells-fargo-325-checking-bonus-available-online/",
+      "https://www.forbes.com/advisor/banking/wells-fargo-promotions-bonus/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Some aggregators advertise $400; the live Wells Fargo offer page confirms $325."
+}

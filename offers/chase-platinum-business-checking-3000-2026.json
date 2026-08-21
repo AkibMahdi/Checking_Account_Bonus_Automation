@@ -1,0 +1,77 @@
+{
+  "id": "chase-platinum-business-checking-3000-2026",
+  "bank": {
+    "name": "Chase",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Platinum Business Checking",
+    "category": "business_checking",
+    "monthly_fee": null,
+    "fee_waiver": null,
+    "personal_or_business": "business",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 3000,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": null,
+    "taxable_1099int": null,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": false,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": null,
+      "window_days": 60,
+      "window_starts": "offer_enrollment",
+      "qualifying_notes": "No direct deposit required; this is a pure balance-park offer."
+    },
+    "min_balance": {
+      "amount": 300000,
+      "new_money": true,
+      "fund_within_days": 60,
+      "hold_days": 180
+    },
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Deposit $300,000+ within 60 days of enrollment and maintain at least a $300,000 balance for 180 days from enrollment."
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": null,
+    "cooldown_notes": "New business customers only.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-10-01",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.chase.com/business/banking/checking",
+    "aggregator_urls": [],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Capital-intensive: $300k parked for 6 months. Included to prove the schema handles balance-only offers with no DD leg."
+}

@@ -1,0 +1,94 @@
+{
+  "id": "citi-checking-475-2026",
+  "bank": {
+    "name": "Citibank",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Citi Checking",
+    "category": "checking",
+    "monthly_fee": 12,
+    "fee_waiver": "Waived when the account receives $250+ per month in qualifying Enhanced Direct Deposits",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 475,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 325,
+        "condition": "$3,000+ in Enhanced Direct Deposits within 90 days of account opening",
+        "dd_cumulative": 3000,
+        "dd_count": 2,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 475,
+        "condition": "$5,000+ in Enhanced Direct Deposits within 90 days; limited-market availability",
+        "dd_cumulative": 5000,
+        "dd_count": 2,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 30,
+    "taxable_1099int": null,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": 2,
+      "min_amount_each": null,
+      "min_amount_cumulative": 3000,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": "Enhanced Direct Deposits are broader than typical: payroll, pension, Social Security and government benefits, plus Zelle and ACH-based P2P payments (Venmo, PayPal) reportedly qualify."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "No early-closure fee reported. The balance tiers require holding the deposited balance for a period after funding rather than a post-bonus hold."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Requires not having owned a Citi checking account in the last 365 days.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "soft",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-10-22",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.doctorofcredit.com/citi-300-checking-bonus/",
+    "aggregator_urls": [
+      "https://www.citi.com/banking/special-offers",
+      "https://bankbonus.com/promotions/citibank/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Citi renders its bonus terms dynamically, so amounts and deadline are aggregator-sourced. Sources conflict on the deadline (DoC says 2026-10-22, bankbonus.com says 2026-10-26). The $325 tier is nationwide; the $475 tier is limited-market (reported NY, CT, MD, VA, DC, CA, NV, NJ and select FL/IL) — headline is the max achievable, so verify market eligibility before planning on $475. The balance-funded path is filed separately as citi-checking-balance-1500-2026: same account, different requirement path, so it gets its own offer file."
+}

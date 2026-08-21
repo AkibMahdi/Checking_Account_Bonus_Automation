@@ -1,0 +1,46 @@
+name: Data point — what actually counted as a direct deposit
+description: The single highest-value field in the project. Report what did or didn't count at a given bank.
+title: "[data-point] "
+labels: ["data-point"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        "What counts as a direct deposit" is the biggest unknown in this whole space, and no
+        bank publishes it accurately. Your first-hand report is worth more than any promo page.
+  - type: input
+    id: offer_id
+    attributes:
+      label: Offer ID
+      placeholder: chase-total-checking-400-2026
+    validations:
+      required: true
+  - type: dropdown
+    id: counted
+    attributes:
+      label: Did it count?
+      options: ["yes", "no"]
+    validations:
+      required: true
+  - type: input
+    id: method
+    attributes:
+      label: How was the money sent?
+      placeholder: ACH payroll from Gusto / Zelle from Chase / ACH push from Fidelity
+    validations:
+      required: true
+  - type: input
+    id: amount
+    attributes:
+      label: Amount (USD)
+  - type: input
+    id: date
+    attributes:
+      label: Date it posted (YYYY-MM-DD)
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: How the transaction was coded, how long the bonus took, what support told you.

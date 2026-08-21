@@ -1,0 +1,79 @@
+{
+  "id": "upgrade-rewards-checking-plus-200-2026",
+  "bank": {
+    "name": "Upgrade",
+    "type": "neobank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Rewards Checking Plus",
+    "category": "checking",
+    "monthly_fee": 0,
+    "fee_waiver": "No monthly maintenance fee",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 200,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 60,
+    "taxable_1099int": null,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": false,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": null,
+      "window_days": 60,
+      "window_starts": "account_open",
+      "qualifying_notes": "No direct deposit required, but the account must be funded and 3 debit purchases must settle."
+    },
+    "min_balance": null,
+    "debit_transactions": {
+      "count": 3,
+      "min_amount_each": null,
+      "window_days": 60
+    },
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Requires applying for an Upgrade Card and, within 60 days, opening and funding Rewards Checking Plus plus 3 settled debit purchases. ATM transactions do not count. Both the card and the checking account must remain open and in good standing."
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Cannot have previously opened a checking account through Upgrade.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "hard",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": null,
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://bankbonus.com/promotions/upgrade/rewards-checking-200-bonus/",
+    "aggregator_urls": [
+      "https://www.thewaystowealth.com/upgrade-bonus/",
+      "https://www.finder.com/banking/upgrade-bonuses"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "The only HARD-pull offer in the set — it must contend for a scarce max_hard_pulls_per_6mo slot, which is what makes the pacing constraint visible in the plan."
+}

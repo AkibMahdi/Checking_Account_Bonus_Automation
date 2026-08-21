@@ -1,0 +1,75 @@
+{
+  "id": "capital-one-360-checking-250-2026",
+  "bank": {
+    "name": "Capital One",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "360 Checking",
+    "category": "checking",
+    "monthly_fee": 0,
+    "fee_waiver": "No monthly fees or minimums",
+    "personal_or_business": "personal",
+    "min_opening_deposit": 0
+  },
+  "bonus": {
+    "amount": 250,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 60,
+    "taxable_1099int": true,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": 2,
+      "min_amount_each": 500,
+      "min_amount_cumulative": 1000,
+      "window_days": 75,
+      "window_starts": "account_open",
+      "qualifying_notes": "Qualifying deposits are periodic ACH or RTP payments from an employer or outside entity. Wires and internal Capital One transfers are excluded."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Account must be open and in good standing at deposit time; bonus expected within ~135 days of opening (75-day qualifying period plus up to 60 days processing)."
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Ineligible if you had an open 360 Checking, Simply Checking or Total Control Checking account as primary or secondary holder on or after 2024-01-01.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "soft",
+    "in_branch_required": false,
+    "promo_code": "CHECKING250"
+  },
+  "dates": {
+    "deadline": null,
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.capitalone.com/bank/checking250/",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/capital-one-300-checking-bonus/",
+      "https://bankbonus.com/promotions/capital-one/360-checking-bonus/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "No published deadline — an evergreen offer. min_amount_each ($500) AND count (2) both bind here, which is the cleanest fit for a biweekly earner in the whole set."
+}

@@ -1,0 +1,103 @@
+{
+  "id": "us-bank-smartly-checking-450-2026",
+  "bank": {
+    "name": "U.S. Bank",
+    "type": "national_bank",
+    "chexsystems": true
+  },
+  "account": {
+    "name": "Smartly Checking",
+    "category": "checking",
+    "monthly_fee": 12,
+    "fee_waiver": "Waived for the first two statement periods; thereafter with $1,500+ in monthly direct deposits, a $1,500 average balance, a Smartly Visa Signature card, Smart Rewards Gold+, military status, primary owner age 13-24 or 65+, or a linked small business account",
+    "personal_or_business": "personal",
+    "min_opening_deposit": 25
+  },
+  "bonus": {
+    "amount": 450,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 250,
+        "condition": "$2,000-$4,999.99 in qualifying direct deposits within 90 days of account opening",
+        "dd_cumulative": 2000,
+        "dd_count": 2,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 350,
+        "condition": "$5,000-$7,999.99 in qualifying direct deposits within 90 days of account opening",
+        "dd_cumulative": 5000,
+        "dd_count": 2,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 450,
+        "condition": "$8,000 or more in qualifying direct deposits within 90 days of account opening",
+        "dd_cumulative": 8000,
+        "dd_count": 2,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 30,
+    "taxable_1099int": true,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": 2,
+      "min_amount_each": null,
+      "min_amount_cumulative": 8000,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": "Two or more qualifying direct deposits (payroll or government benefits via ACH). P2P payments do not qualify."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "No clawback or early-closure penalty stated on the offer page."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Ineligible if you held a U.S. Bank consumer checking account in the last 12 months or received a U.S. Bank checking bonus in the last 12 months.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-09-08",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.usbank.com/splash/checking/2026-all-market-checking-offer.html",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/u-s-bank-450-100-checking-bonus/",
+      "https://bankbonus.com/promotions/us-bank/personal-checking-bonus-offer/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Also requires enrolling in the U.S. Bank mobile app or online banking within 90 days. Bonus is credited as adjusted interest and reported on 1099-INT. Offer may be unavailable outside the U.S. Bank footprint but no state list is published, so states_included is left null."
+}

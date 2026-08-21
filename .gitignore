@@ -1,0 +1,34 @@
+# ---- USER PRIVATE DATA — never commit ----
+user-config.yaml
+user-config.*.yaml
+!user-config.example.yaml
+plan.json
+plan.md
+*.ics
+tax-summary-*.md
+
+# ---- Secrets ----
+.env
+.env.*
+!.env.example
+*.key
+secrets.*
+
+# ---- Pipeline scratch ----
+data/cache/
+data/discovered.json
+data/hashes.json
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+
+# ---- OS/editor ----
+.DS_Store
+.idea/
+.vscode/

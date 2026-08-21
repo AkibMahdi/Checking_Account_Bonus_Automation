@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/AkibMahdi/Checking_Account_Bonus_Automation/schema/user-config.schema.json",
+  "title": "User config (local only — never committed)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile", "pay_schedule"],
+  "properties": {
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "max_concurrent_accounts": { "type": "integer", "minimum": 1, "maximum": 20, "default": 3 },
+        "max_hard_pulls_per_6mo": { "type": "integer", "minimum": 0, "maximum": 20, "default": 2 },
+        "min_bonus_threshold": { "type": "number", "minimum": 0, "default": 150 },
+        "avoid_banks": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "chexsystems_sensitive": { "type": "boolean", "default": false },
+        "allow_business_accounts": { "type": "boolean", "default": false },
+        "max_liquid_capital": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Cash you can park to satisfy minimum-balance offers. null = unlimited."
+        },
+        "horizon_days": { "type": "integer", "minimum": 30, "maximum": 1095, "default": 365 }
+      }
+    },
+    "pay_schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cadence", "next_pay_date", "typical_dd_amount"],
+      "properties": {
+        "cadence": { "type": "string", "enum": ["weekly", "biweekly", "semimonthly", "monthly"] },
+        "next_pay_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "typical_dd_amount": { "type": "number", "minimum": 0 },
+        "splittable": { "type": "boolean", "default": false },
+        "max_split_accounts": { "type": "integer", "minimum": 1, "maximum": 10, "default": 1 }
+      }
+    },
+    "bank_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["bank"],
+        "properties": {
+          "bank": { "type": "string" },
+          "account": { "type": ["string", "null"] },
+          "opened": { "type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+          "bonus_received": { "type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+          "bonus_amount": { "type": ["number", "null"], "minimum": 0 },
+          "closed": { "type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+          "status": { "type": ["string", "null"], "enum": ["in_progress", "completed", "closed", "denied", null] }
+        }
+      }
+    },
+    "hard_pulls": {
+      "type": "array",
+      "description": "Non-bank hard inquiries (credit cards, loans) so pacing stays honest.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date"],
+        "properties": {
+          "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+          "reason": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

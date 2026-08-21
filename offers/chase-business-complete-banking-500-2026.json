@@ -1,0 +1,102 @@
+{
+  "id": "chase-business-complete-banking-500-2026",
+  "bank": {
+    "name": "Chase",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Business Complete Banking",
+    "category": "business_checking",
+    "monthly_fee": 15,
+    "fee_waiver": "Waived with any of: $2,000 minimum daily balance; $2,000 in monthly purchases on a linked Chase Ink card; $2,000 in Chase QuickAccept deposits; linked Chase Private Client Checking; qualifying military status",
+    "personal_or_business": "business",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 500,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 400,
+        "condition": "Deposit $2,000+ in new money within 30 days and hold it 60 days from enrollment, plus 5 qualifying transactions within 90 days",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 2000,
+        "window_days": 30,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 500,
+        "condition": "Deposit $10,000+ in new money within 30 days and hold it 60 days from enrollment, plus 5 qualifying transactions within 90 days",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 10000,
+        "window_days": 30,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 15,
+    "taxable_1099int": true,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": false,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": null,
+      "window_days": 30,
+      "window_starts": "offer_enrollment",
+      "qualifying_notes": "No direct deposit required. Qualifying transactions are debit purchases, QuickAccept deposits, QuickDeposit, ACH credits, wires and Chase Online Bill Pay. ACH debits, Zelle and credit card transfers are excluded."
+    },
+    "min_balance": {
+      "amount": 10000,
+      "new_money": true,
+      "fund_within_days": 30,
+      "hold_days": 60
+    },
+    "debit_transactions": {
+      "count": 5,
+      "min_amount_each": null,
+      "window_days": 90
+    },
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": 180,
+    "early_close_fee": null,
+    "notes": "Account must stay open roughly 6 months or the bonus is forfeited. Chase reportedly withholds an estimated-tax amount from the bonus."
+  },
+  "eligibility": {
+    "cooldown_months": 24,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "One bonus per customer per two-year period. Existing Chase business checking customers excluded, as are accounts closed within the prior 3 years with a negative balance.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "soft",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-10-15",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.doctorofcredit.com/chase-business-checking-500-online-bonus-no-direct-deposit-required/",
+    "aggregator_urls": [
+      "https://www.moneysmylife.com/chase-business-checking-promotions/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Business offer — excluded unless profile.allow_business_accounts is true."
+}

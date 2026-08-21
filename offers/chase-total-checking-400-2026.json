@@ -1,0 +1,75 @@
+{
+  "id": "chase-total-checking-400-2026",
+  "bank": {
+    "name": "Chase",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Total Checking",
+    "category": "checking",
+    "monthly_fee": 15,
+    "fee_waiver": "$0 with any one of: $500+ in total qualifying electronic deposits per month; $1,500+ beginning-day balance; $5,000+ average beginning-day balance across linked qualifying accounts; or a linked qualifying Chase checking account",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 400,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 15,
+    "taxable_1099int": null,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 1000,
+      "window_days": 90,
+      "window_starts": "coupon_enrollment",
+      "qualifying_notes": "Qualifying electronic deposits: payroll, pension, government benefit and other ACH credits. Enrollment coupon is applied automatically when applying from the offer page."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Enrolled account must not be closed or restricted at the time of payout. No explicit post-bonus hold period stated on the offer page."
+  },
+  "eligibility": {
+    "cooldown_months": 24,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Also ineligible if you closed a Chase checking account within 90 days, or closed one with a negative balance in the last 3 years.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-10-14",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://account.chase.com/consumer/banking/seo",
+    "aggregator_urls": [
+      "https://www.nerdwallet.com/banking/learn/chase-signup-bonuses",
+      "https://bankbonus.com/promotions/chase-bank/chase-total-checking-bonus-offer/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "window_starts is coupon_enrollment, not account_open: the 90-day clock runs from when the coupon is enrolled."
+}

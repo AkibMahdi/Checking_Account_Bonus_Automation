@@ -1,0 +1,135 @@
+name: New offer
+description: Report a bank bonus that isn't tracked yet. A bot turns this into a draft offer JSON and opens a PR.
+title: "[offer] "
+labels: ["new-offer"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every field maps to a field in `schema/offer.schema.json`.
+        **Leave a field blank if the offer page doesn't state it.** Blank becomes `null`.
+        Never guess — a wrong value is worse than a missing one.
+  - type: input
+    id: bank_name
+    attributes:
+      label: Bank name
+      placeholder: Chase
+    validations:
+      required: true
+  - type: dropdown
+    id: bank_type
+    attributes:
+      label: Bank type
+      options: [national_bank, regional_bank, credit_union, online_bank, neobank]
+    validations:
+      required: true
+  - type: input
+    id: account_name
+    attributes:
+      label: Account name
+      placeholder: Total Checking
+    validations:
+      required: true
+  - type: dropdown
+    id: account_category
+    attributes:
+      label: Account category
+      options: [checking, savings, business_checking, business_savings, money_market, cd]
+    validations:
+      required: true
+  - type: input
+    id: bonus_amount
+    attributes:
+      label: Bonus amount (USD, numbers only)
+      placeholder: "400"
+    validations:
+      required: true
+  - type: input
+    id: monthly_fee
+    attributes:
+      label: Monthly fee (numbers only, blank if none)
+  - type: dropdown
+    id: dd_required
+    attributes:
+      label: Is a direct deposit required?
+      options: ["yes", "no"]
+    validations:
+      required: true
+  - type: input
+    id: dd_count
+    attributes:
+      label: Number of direct deposits required
+      placeholder: "2"
+  - type: input
+    id: dd_min_each
+    attributes:
+      label: Minimum amount per deposit
+      placeholder: "500"
+  - type: input
+    id: dd_min_cumulative
+    attributes:
+      label: Minimum cumulative deposits across the window
+      placeholder: "5000"
+  - type: input
+    id: dd_window_days
+    attributes:
+      label: Requirement window (days)
+      placeholder: "90"
+  - type: dropdown
+    id: dd_window_starts
+    attributes:
+      label: When does the window start?
+      description: This single field changes the whole timeline. Pick "not stated" rather than guessing.
+      options: [not stated, account_open, first_deposit, offer_enrollment, coupon_enrollment]
+    validations:
+      required: true
+  - type: input
+    id: min_balance
+    attributes:
+      label: Minimum balance required (USD)
+  - type: input
+    id: debit_transactions
+    attributes:
+      label: Debit card transactions required (count)
+  - type: input
+    id: deadline
+    attributes:
+      label: Offer deadline (YYYY-MM-DD)
+      placeholder: "2026-12-31"
+  - type: input
+    id: states_included
+    attributes:
+      label: Available only in these states (comma-separated, blank = nationwide)
+      placeholder: "NY, NJ, CT"
+  - type: input
+    id: cooldown_months
+    attributes:
+      label: Cooldown before you can get this bonus again (months)
+  - type: dropdown
+    id: pull_type
+    attributes:
+      label: Credit pull
+      options: [unknown, soft, hard]
+  - type: input
+    id: promo_code
+    attributes:
+      label: Promo code
+  - type: input
+    id: source_url
+    attributes:
+      label: Source URL
+      description: The bank's own page if you have it — that's what makes confidence "high".
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Clawback terms, what counted as a DD, quirks in the application flow.
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: Every value above is copied from the offer page. I did not infer or guess any field.
+          required: true

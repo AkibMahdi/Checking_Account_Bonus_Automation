@@ -1,0 +1,94 @@
+{
+  "id": "pnc-virtual-wallet-performance-select-400-2026",
+  "bank": {
+    "name": "PNC",
+    "type": "national_bank",
+    "chexsystems": true
+  },
+  "account": {
+    "name": "Virtual Wallet with Performance Select",
+    "category": "checking",
+    "monthly_fee": 25,
+    "fee_waiver": "Waived with a qualifying monthly direct deposit or qualifying relationship balances",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 400,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 100,
+        "condition": "Open Virtual Wallet (base) and receive $500+ in qualifying direct deposits within the first 60 days",
+        "dd_cumulative": 500,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 60,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 400,
+        "condition": "Open Virtual Wallet with Performance Select and receive $5,000+ in qualifying direct deposits within the first 60 days",
+        "dd_cumulative": 5000,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 60,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": null,
+    "taxable_1099int": null,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 5000,
+      "window_days": 60,
+      "window_starts": "account_open",
+      "qualifying_notes": "Must be recurring direct deposits of paycheck, pension, Social Security or other regular income. Wires, P2P transfers, inter-account transfers and branch/ATM deposits do not count."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Account must remain open to receive the bonus. Bonus is credited 60-90 days after all conditions are met."
+  },
+  "eligibility": {
+    "cooldown_months": 24,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Two rules stack: ineligible with an existing PNC consumer checking account or one closed in the past 12 months, AND ineligible if you were primary signer on an account that received a PNC promotional premium in the past 24 months.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-08-31",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.pnc.com/en/personal-banking/banking/checking/bonus-offer.html",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/pnc-up-to-250-400-checking-bonus/",
+      "https://bankbonus.com/promotions/pnc-bank/virtual-wallet-checking-bonus-offer/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Deadline is imminent (10 days from first_seen) — a good test of the near-expiry warning path. payout_days_after_completion is null because the bank states a 60-90 day range, not a single figure."
+}

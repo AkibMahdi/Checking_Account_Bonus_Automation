@@ -1,0 +1,110 @@
+name: update-offers
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"       # Mondays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Max URLs to process this run"
+        default: "60"
+      force:
+        description: "Ignore the hash cache"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-offers
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore content-hash cache
+        uses: actions/cache@v4
+        with:
+          path: data/hashes.json
+          key: offer-hashes-${{ github.run_id }}
+          restore-keys: offer-hashes-
+
+      - name: Discover candidate offer pages
+        run: python -m scripts.discover --min-bonus 150
+        continue-on-error: true
+
+      - name: Re-extract tracked offers (hash-diffed, near-zero cost when unchanged)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m scripts.extract --refresh-all --limit ${{ github.event.inputs.limit || 60 }} ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+
+      - name: Extract newly discovered pages
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -f data/discovered.json ]; then
+            python -m scripts.extract --queue data/discovered.json --limit 25
+          fi
+        continue-on-error: true
+
+      - name: Validate
+        run: python -m scripts.validate
+
+      - name: Classify the change
+        id: diff
+        run: |
+          git add -A offers
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          {
+            echo "summary<<DIFFEOF"
+            git diff --cached --stat
+            echo
+            git diff --cached -- offers | grep -E '^[+-]\s*"' | head -80 || true
+            echo "DIFFEOF"
+          } >> "$GITHUB_OUTPUT"
+          # Auto-commit only if every touched offer is high confidence.
+          low=0
+          for f in $(git diff --cached --name-only -- offers); do
+            [ -f "$f" ] || continue
+            if ! grep -q '"confidence": "high"' "$f"; then low=1; fi
+          done
+          echo "high_confidence_only=$([ $low -eq 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Auto-commit high-confidence changes
+        if: steps.diff.outputs.changed == 'true' && steps.diff.outputs.high_confidence_only == 'true'
+        run: |
+          git config user.name "offer-bot"
+          git config user.email "offer-bot@users.noreply.github.com"
+          git commit -m "chore: refresh offers (high confidence, automated)"
+          git push
+
+      - name: Open a PR for anything else
+        if: steps.diff.outputs.changed == 'true' && steps.diff.outputs.high_confidence_only != 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bot/offer-refresh
+          commit-message: "chore: refresh offers (needs review)"
+          title: "Offer refresh — needs review"
+          labels: automated, needs-review
+          body: |
+            Automated refresh from `update-offers.yml`. At least one touched offer is
+            below `confidence: high`, so this needs a human.
+
+            ```
+            ${{ steps.diff.outputs.summary }}
+            ```

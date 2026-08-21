@@ -1,0 +1,90 @@
+{
+  "id": "bmo-smart-advantage-checking-400-2026",
+  "bank": {
+    "name": "BMO",
+    "type": "regional_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Smart Advantage Checking",
+    "category": "checking",
+    "monthly_fee": 0,
+    "fee_waiver": "Smart Advantage Checking has no monthly maintenance fee",
+    "personal_or_business": "personal",
+    "min_opening_deposit": 25
+  },
+  "bonus": {
+    "amount": 400,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 100,
+    "taxable_1099int": true,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 4000,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": "Must be regular income from an employer or similar third party (salary, paycheck, pension, Social Security or government benefits) deposited electronically."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Bonus is deposited approximately 100 days after account opening. Accounts with a zero balance may be closed. One bonus per eligible customer."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": null,
+    "states_included": [
+      "AZ",
+      "CA",
+      "CO",
+      "FL",
+      "IA",
+      "IL",
+      "IN",
+      "MN",
+      "NM",
+      "NV",
+      "OR",
+      "UT",
+      "WA",
+      "WI"
+    ],
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-09-08",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.bmo.com/en-us/main/personal/checking-accounts/digital-offer/",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/il-wi-mn-in-az-fl-ks-mo-bmo-harris-350-checking-300-savings-bonus/",
+      "https://www.hustlermoneyblog.com/bmo-harris-bank-promotions/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": null
+}

@@ -1,0 +1,89 @@
+{
+  "id": "mt-bank-mychoice-plus-checking-400-2026",
+  "bank": {
+    "name": "M&T Bank",
+    "type": "regional_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "MyChoice Plus Checking",
+    "category": "checking",
+    "monthly_fee": 14.95,
+    "fee_waiver": "MyChoice Plus: $14.95/mo, waived with a $2,500 average daily balance or $1,500+ in direct deposits per cycle. EZChoice Checking ($0/mo) also qualifies for the offer; MyWay Banking does not",
+    "personal_or_business": "personal",
+    "min_opening_deposit": 25
+  },
+  "bonus": {
+    "amount": 400,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 90,
+    "taxable_1099int": true,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 500,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": "Recurring electronic deposits of payroll, pension or Social Security. P2P and bank-to-bank transfers do not count."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": 180,
+    "early_close_fee": 50,
+    "notes": "Aggregators report a $50 early closure fee within 180 days; this is not stated on the promo landing page."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Only one bonus per customer.",
+    "states_included": [
+      "CT",
+      "DC",
+      "DE",
+      "MA",
+      "MD",
+      "ME",
+      "NH",
+      "NJ",
+      "NY",
+      "PA",
+      "VA",
+      "VT",
+      "WV"
+    ],
+    "states_excluded": [],
+    "existing_customer_allowed": null,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": "TU"
+  },
+  "dates": {
+    "deadline": "2026-08-31",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://campaigns.mtb.com/400bonus",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/mt-bank-150-checking-bonus-tn-available-online-ct-dc-de-md-nj-ny-pa-va-wv/",
+      "https://www.hustlermoneyblog.com/mt-bank-promotions/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "One of only two offers in the set with a real clawback (180-day hold, $50 early close fee) — the safe-to-close date matters here."
+}

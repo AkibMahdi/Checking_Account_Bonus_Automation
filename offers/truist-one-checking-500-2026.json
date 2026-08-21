@@ -1,0 +1,98 @@
+{
+  "id": "truist-one-checking-500-2026",
+  "bank": {
+    "name": "Truist",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Truist One Checking",
+    "category": "checking",
+    "monthly_fee": 12,
+    "fee_waiver": "Six waiver paths including age under 25, age 62+, student status, $500+ in qualifying direct deposits, $500+ combined balance, or a linked Truist credit product",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 500,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 14,
+    "taxable_1099int": null,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": 2,
+      "min_amount_each": null,
+      "min_amount_cumulative": 2000,
+      "window_days": 120,
+      "window_starts": "account_open",
+      "qualifying_notes": null
+    },
+    "min_balance": null,
+    "debit_transactions": {
+      "count": 20,
+      "min_amount_each": null,
+      "window_days": 120
+    },
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Requires BOTH at least 2 qualifying direct deposits totaling $2,000+ AND at least 20 qualifying debit card purchases, both within 120 days of account opening. Bonus paid within 10 business days after verification."
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": null,
+    "cooldown_notes": null,
+    "states_included": [
+      "AL",
+      "AR",
+      "DC",
+      "FL",
+      "GA",
+      "IN",
+      "KY",
+      "MD",
+      "MS",
+      "NC",
+      "NJ",
+      "OH",
+      "PA",
+      "SC",
+      "TN",
+      "TX",
+      "VA",
+      "WV"
+    ],
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2027-02-02",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.truist.com/checking/open-checking",
+    "aggregator_urls": [
+      "https://www.hustlermoneyblog.com/truist-bank-promotions/",
+      "https://bankbonus.com/promotions/truist-bank/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "The only offer requiring a large debit-transaction count alongside DDs — 20 purchases in 120 days is ~1 every 6 days."
+}

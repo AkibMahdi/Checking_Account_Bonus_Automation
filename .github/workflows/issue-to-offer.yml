@@ -1,0 +1,56 @@
+name: issue-to-offer
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  convert:
+    if: contains(github.event.issue.labels.*.name, 'new-offer') || contains(github.event.issue.labels.*.name, 'data-point')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Write the issue body to a file
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: printf '%s' "$BODY" > /tmp/issue.md
+
+      - name: Convert
+        id: convert
+        run: |
+          KIND=new-offer
+          if [[ "${{ join(github.event.issue.labels.*.name, ',') }}" == *data-point* ]]; then
+            KIND=data-point
+          fi
+          python -m scripts.issue_to_offer --body-file /tmp/issue.md --kind "$KIND"
+
+      - name: Validate the draft
+        run: python -m scripts.validate ${{ steps.convert.outputs.path }}
+
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          branch: contrib/issue-${{ github.event.issue.number }}
+          commit-message: "data: ${{ steps.convert.outputs.offer_id }} from #${{ github.event.issue.number }}"
+          title: "Community submission: ${{ steps.convert.outputs.offer_id }}"
+          labels: community, needs-review
+          body: |
+            Generated from #${{ github.event.issue.number }} by `issue_to_offer.py`.
+
+            Reviewer checklist:
+            - [ ] `source_url` really shows these terms
+            - [ ] `window_starts` matches the page (not inferred)
+            - [ ] `confidence` reflects whether the source is the bank's own domain
+            - [ ] `provenance.verified_by` is accurate
+
+            Closes #${{ github.event.issue.number }}

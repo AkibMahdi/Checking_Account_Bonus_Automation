@@ -1,0 +1,60 @@
+name: build-dist
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "offers/**"
+      - "web/**"
+      - "scripts/build_dist.py"
+      - ".github/workflows/build-dist.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Build bundle
+        run: python -m scripts.build_dist
+      - name: Commit dist
+        run: |
+          if ! git diff --quiet -- dist; then
+            git config user.name "offer-bot"
+            git config user.email "offer-bot@users.noreply.github.com"
+            git add dist
+            git commit -m "chore: rebuild dist bundle"
+            git push
+          fi
+      - name: Assemble the Pages site
+        run: |
+          mkdir -p _site
+          cp -r web/* _site/
+          cp -r dist _site/dist
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,87 @@
+{
+  "id": "fifth-third-momentum-checking-300-2026",
+  "bank": {
+    "name": "Fifth Third Bank",
+    "type": "regional_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Momentum Checking",
+    "category": "checking",
+    "monthly_fee": 0,
+    "fee_waiver": "Momentum Checking has no monthly service fee",
+    "personal_or_business": "personal",
+    "min_opening_deposit": 0
+  },
+  "bonus": {
+    "amount": 300,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 10,
+    "taxable_1099int": null,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 500,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": "Qualifying direct deposits are payroll, Social Security, pension and government benefits."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Bonus paid within 10 business days of completing the qualifying activity; account must remain open for 90 days."
+  },
+  "eligibility": {
+    "cooldown_months": 13,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": null,
+    "states_included": [
+      "FL",
+      "GA",
+      "IL",
+      "IN",
+      "KY",
+      "MI",
+      "NC",
+      "OH",
+      "SC",
+      "TN",
+      "VA"
+    ],
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-09-30",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.53.com/content/fifth-third/en/mkg/checking-offer.html",
+    "aggregator_urls": [
+      "https://www.hustlermoneyblog.com/fifth-third-bank-promotions/",
+      "https://bankbonus.com/promotions/fifth-third-bank/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Low bar for a biweekly earner: one $500+ paycheck inside 90 days clears it."
+}

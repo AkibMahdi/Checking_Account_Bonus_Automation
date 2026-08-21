@@ -1,0 +1,112 @@
+{
+  "id": "sofi-checking-and-savings-400-2026",
+  "bank": {
+    "name": "SoFi",
+    "type": "online_bank",
+    "chexsystems": false
+  },
+  "account": {
+    "name": "SoFi Checking and Savings",
+    "category": "checking",
+    "monthly_fee": 0,
+    "fee_waiver": "No account, overdraft, service or maintenance fees",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 400,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 0,
+        "condition": "$1.00-$999.99 in eligible direct deposits during the 25-day evaluation period",
+        "dd_cumulative": 1,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 25,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 50,
+        "condition": "$1,000.00-$4,999.99 in eligible direct deposits during the 25-day evaluation period",
+        "dd_cumulative": 1000,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 25,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 400,
+        "condition": "$5,000.00 or more in eligible direct deposits during the 25-day evaluation period",
+        "dd_cumulative": 5000,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 25,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 7,
+    "taxable_1099int": null,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": 1,
+      "min_amount_cumulative": 5000,
+      "window_days": 25,
+      "window_starts": "first_deposit",
+      "qualifying_notes": "Eligible deposits are payroll, pension or government benefit ACH credits from an employer, payroll provider, benefits provider or government agency. Zelle, PayPal and Venmo transfers do not qualify. The 25-day clock starts at the first eligible deposit of $1+."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Account must be in good standing at time of payment. No clawback or early-close fee stated."
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Existing SoFi members qualify only if they have never previously set up direct deposit with SoFi. Limit one bonus per member; on joint accounts only the primary holder's activity counts.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": true,
+    "pull_type": "soft",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-12-31",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.sofi.com/banking/checking-offer/",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/sofi-checking-5000-direct-deposit-required/",
+      "https://www.forbes.com/advisor/banking/sofi-promotions-bonus/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [
+    {
+      "date": "2026-07-14",
+      "counted": true,
+      "method": "ACH payroll from Gusto",
+      "amount": 2600,
+      "source": "https://www.doctorofcredit.com/sofi-checking-5000-direct-deposit-required/",
+      "notes": "Posted same day as employer payroll."
+    }
+  ],
+  "notes": "The hardest window in the dataset: $5,000 cumulative in 25 days. A biweekly earner gets at most 2 pay dates in 25 days, so this needs typical_dd_amount >= $2,500. Doctor of Credit reports the bonus is issued on Form 1099-MISC, not 1099-INT; SoFi's page does not state the form, so taxable_1099int is null."
+}

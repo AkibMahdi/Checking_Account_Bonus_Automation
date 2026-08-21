@@ -1,0 +1,40 @@
+# Copy to user-config.yaml and edit. user-config.yaml is gitignored and never leaves your machine.
+#   cp user-config.example.yaml user-config.yaml
+
+profile:
+  state: NY                       # 2-letter code; drives state-gated offer filtering
+  max_concurrent_accounts: 3      # how many bonuses to chase at once
+  max_hard_pulls_per_6mo: 2
+  min_bonus_threshold: 150        # ignore anything smaller
+  avoid_banks: []                 # e.g. [Wells Fargo]
+  chexsystems_sensitive: false    # true => drop banks that pull ChexSystems
+  allow_business_accounts: false  # true => include business checking offers
+  max_liquid_capital: 20000       # cash you can park for min-balance offers; null = unlimited
+  horizon_days: 365               # how far ahead to plan
+
+pay_schedule:
+  cadence: biweekly               # biweekly | semimonthly | weekly | monthly
+  next_pay_date: 2026-08-28
+  typical_dd_amount: 2400
+  splittable: true                # can your employer split the DD across accounts?
+  max_split_accounts: 2
+
+# Everything you've already done. Drives cooldown filtering and the tax summary.
+bank_history:
+  - bank: Wells Fargo
+    account: Everyday Checking
+    opened: 2024-09-01
+    bonus_received: 2024-12-15
+    bonus_amount: 300
+    closed: 2025-07-01
+    status: closed
+  - bank: Chase
+    account: Total Checking
+    opened: 2026-08-01
+    bonus_received: null
+    status: in_progress
+
+# Hard inquiries that aren't in bank_history (credit cards, auto loans).
+hard_pulls:
+  - date: 2026-05-02
+    reason: Credit card application

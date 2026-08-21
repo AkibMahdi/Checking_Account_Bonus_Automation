@@ -1,0 +1,80 @@
+{
+  "id": "chase-savings-200-2026",
+  "bank": {
+    "name": "Chase",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Chase Savings",
+    "category": "savings",
+    "monthly_fee": 5,
+    "fee_waiver": "Waived with a $300 minimum daily balance; $25+ in monthly automatic transfers from a linked Chase checking account; a linked Chase Premier Plus/Sapphire checking account; or primary owner under 18",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 200,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": 15,
+    "taxable_1099int": null,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": false,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": null,
+      "window_days": null,
+      "window_starts": null,
+      "qualifying_notes": null
+    },
+    "min_balance": {
+      "amount": 15000,
+      "new_money": true,
+      "fund_within_days": 30,
+      "hold_days": 90
+    },
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Deposit $15,000+ in new money within 30 days of coupon enrollment and maintain a $15,000 balance for 90 days from enrollment. The hold runs from enrollment, not from bonus payment."
+  },
+  "eligibility": {
+    "cooldown_months": 24,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "One new-savings bonus every two years from the last enrollment date. Ineligible if you closed a Chase savings account within 90 days or closed one with a negative balance in the last 3 years.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-10-14",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.doctorofcredit.com/targeted-chase-900-checking-savings-bonus/",
+    "aggregator_urls": [
+      "https://www.mymoneyblog.com/chase-bank-900-bonus-coupon-code.html",
+      "https://www.moneysmylife.com/chase-900-checking-savings-bonus-targeted/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "TARGETED offer — savings leg of a combined $900 checking + savings promotion. Not publicly available to everyone; no chase.com page could be retrieved."
+}

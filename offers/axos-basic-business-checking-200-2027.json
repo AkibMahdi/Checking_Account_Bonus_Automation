@@ -1,0 +1,89 @@
+{
+  "id": "axos-basic-business-checking-200-2027",
+  "bank": {
+    "name": "Axos Bank",
+    "type": "online_bank",
+    "chexsystems": true
+  },
+  "account": {
+    "name": "Basic Business Checking",
+    "category": "business_checking",
+    "monthly_fee": 0,
+    "fee_waiver": "No monthly maintenance fee",
+    "personal_or_business": "business",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 200,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 50,
+        "condition": "Per statement cycle with a $3,000+ average daily balance, earnable up to 4 times across the first 5 statement cycles",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 3000,
+        "window_days": 30,
+        "repeatable_cycles": 4
+      }
+    ],
+    "payout_days_after_completion": 10,
+    "taxable_1099int": null,
+    "tier_mode": "repeating"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": false,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": null,
+      "window_days": null,
+      "window_starts": null,
+      "qualifying_notes": null
+    },
+    "min_balance": {
+      "amount": 3000,
+      "new_money": null,
+      "fund_within_days": 30,
+      "hold_days": 150
+    },
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": null
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": null,
+    "cooldown_notes": null,
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": null,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": "START200"
+  },
+  "dates": {
+    "deadline": "2027-01-31",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://bankbonus.com/promotions/axos-bank/",
+    "aggregator_urls": [
+      "https://www.hustlermoneyblog.com/axos-bank-promotions/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Low capital, low bonus, no DD — the floor case for the min_bonus_threshold filter."
+}

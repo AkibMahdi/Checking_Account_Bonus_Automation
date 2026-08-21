@@ -1,0 +1,8 @@
+# Core (planner, validator, calendar, report) — stdlib only except PyYAML + jsonschema
+PyYAML>=6.0
+jsonschema>=4.20
+
+# Pipeline (discover.py / extract.py) — optional, only needed to refresh offers
+requests>=2.31
+beautifulsoup4>=4.12
+anthropic>=0.40

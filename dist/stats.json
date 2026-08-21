@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-08-21T07:12:08+00:00",
+  "offer_count": 24,
+  "total_bonus_value": 14350,
+  "median_bonus": 400,
+  "max_bonus": 3000,
+  "by_confidence": {
+    "high": 13,
+    "medium": 11
+  },
+  "by_bank_type": {
+    "credit_union": 1,
+    "national_bank": 12,
+    "neobank": 1,
+    "online_bank": 3,
+    "regional_bank": 7
+  },
+  "expiring_within_30_days": [
+    "bmo-smart-advantage-checking-400-2026",
+    "mt-bank-mychoice-plus-checking-400-2026",
+    "pnc-virtual-wallet-performance-select-400-2026",
+    "us-bank-smartly-checking-450-2026"
+  ]
+}

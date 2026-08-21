@@ -1,0 +1,91 @@
+{
+  "id": "regions-lifegreen-checking-400-2026",
+  "bank": {
+    "name": "Regions Bank",
+    "type": "regional_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "LifeGreen Checking",
+    "category": "checking",
+    "monthly_fee": 8,
+    "fee_waiver": "LifeGreen Checking: $8/mo with eStatements ($11 without). LifeGreen Preferred: $18/mo, waived with a $5,000 average monthly balance, $25,000 combined deposits, $25,000 qualifying loan balances, or a qualifying mortgage",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 400,
+    "currency": "USD",
+    "tiers": null,
+    "payout_days_after_completion": null,
+    "taxable_1099int": null,
+    "tier_mode": null
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 1000,
+      "window_days": 90,
+      "window_starts": "offer_enrollment",
+      "qualifying_notes": "Qualifying ACH direct deposits within 90 days. Registration for the offer is separate from account opening."
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": 25,
+    "notes": "$25 early closure fee if the account is closed within 180 days."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": null,
+    "states_included": [
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "IL",
+      "IN",
+      "IA",
+      "KY",
+      "LA",
+      "MS",
+      "MO",
+      "NC",
+      "SC",
+      "TN",
+      "TX"
+    ],
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": "EZV3F2M"
+  },
+  "dates": {
+    "deadline": "2027-01-31",
+    "enroll_by": "2026-12-31",
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.regions.com/promo/pm/switch-to-regions?promo=EZV3F2M",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/regions-bank-400-checking-bonus-50-referral-al-ar-fl-ga-il-in-ia-ky-la-ms-mo-nc-sc-tn-tx-2/",
+      "https://bankbonus.com/promotions/regions-bank/lifegreen-checking-400-bonus/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Two-date offer: register by 2026-12-31, open by 2027-01-31 — this is why enroll_by exists separately from deadline. A separate $50 referral bonus is also available."
+}

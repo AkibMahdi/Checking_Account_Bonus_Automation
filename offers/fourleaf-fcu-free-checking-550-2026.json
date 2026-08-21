@@ -1,0 +1,106 @@
+{
+  "id": "fourleaf-fcu-free-checking-550-2026",
+  "bank": {
+    "name": "FourLeaf Federal Credit Union",
+    "type": "credit_union",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "FourLeaf Free Checking",
+    "category": "checking",
+    "monthly_fee": 0,
+    "fee_waiver": "Free Checking — no monthly fee",
+    "personal_or_business": "personal",
+    "min_opening_deposit": 5
+  },
+  "bonus": {
+    "amount": 550,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 350,
+        "condition": "Receive a qualifying direct deposit of $500+ within 90 days of account opening and make 10 point-of-sale debit card transactions",
+        "dd_cumulative": 500,
+        "dd_count": 1,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 100,
+        "condition": "At the 12-month anniversary, having maintained monthly recurring direct deposits of $500+ and 10 POS debit transactions per month",
+        "dd_cumulative": 6000,
+        "dd_count": 12,
+        "min_balance": null,
+        "window_days": 365,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 100,
+        "condition": "At the 24-month anniversary, having maintained monthly recurring direct deposits of $500+ and 10 POS debit transactions per month",
+        "dd_cumulative": 12000,
+        "dd_count": 24,
+        "min_balance": null,
+        "window_days": 730,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 60,
+    "taxable_1099int": null,
+    "tier_mode": "additive"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": 1,
+      "min_amount_each": 500,
+      "min_amount_cumulative": null,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": null
+    },
+    "min_balance": null,
+    "debit_transactions": {
+      "count": 10,
+      "min_amount_each": null,
+      "window_days": 90
+    },
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Account must remain open and in good standing through each bonus deposit date; the anniversary tiers require sustained monthly DD and debit activity for up to 24 months."
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "No existing FourLeaf checking account as primary holder; no prior FourLeaf new-checking bonus; one bonus per member.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-12-31",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.fourleaffcu.com/ppc/checking-promo-550/",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/four-leaf-federal-credit-union-550-checking-bonus-fka-as-bethpage-federalcredit-union/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Tiers here are ADDITIVE, not alternative: $350 up front plus $100 at each of the 12- and 24-month anniversaries = $550 over two years. This is the edge case that forced bonus.tier_mode into the schema — without it the planner would credit $550 against a 90-day timeline and rank this first by a mile. The planner scores the $350 near-term tier and surfaces the anniversary tiers as caveats."
+}

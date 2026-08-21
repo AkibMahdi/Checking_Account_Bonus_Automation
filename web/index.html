@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bank Bonus Planner</title>
+<meta name="description" content="Track US bank account signup bonuses and plan a biweekly direct-deposit schedule. Your data stays in your browser.">
+<style>
+  :root {
+    --bg: #fbfaf8; --panel: #ffffff; --ink: #1c1a17; --muted: #6b655c;
+    --line: #e4dfd7; --accent: #7a4a2b; --accent-soft: #f2e9e1;
+    --good: #2f6b43; --warn: #8a5a11; --bad: #9a3226;
+    --radius: 10px;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16151a; --panel: #1f1e24; --ink: #eceaf0; --muted: #9d97a6;
+      --line: #322f3a; --accent: #d79c72; --accent-soft: #2c2620;
+      --good: #6dbb87; --warn: #d7a54a; --bad: #e0857a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 80px; }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 18px; margin-bottom: 24px; }
+  h1 { font-size: 1.5rem; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 0.9rem; margin: 0; }
+  .privacy {
+    margin-top: 12px; padding: 8px 12px; border-radius: var(--radius);
+    background: var(--accent-soft); color: var(--ink); font-size: 0.82rem;
+    display: inline-block;
+  }
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .panel h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--muted); margin: 0 0 12px; }
+  label { display: block; font-size: 0.8rem; color: var(--muted); margin: 12px 0 4px; }
+  input[type=text], input[type=number], input[type=date], select {
+    width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px;
+    background: var(--bg); color: var(--ink); font: inherit; font-size: 0.88rem;
+  }
+  .row { display: flex; gap: 8px; }
+  .row > * { flex: 1; min-width: 0; }
+  .check { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 0.85rem; color: var(--ink); }
+  .check input { margin: 0; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+  .stat .n { font-size: 1.35rem; font-weight: 620; letter-spacing: -0.02em; display: block; }
+  .stat .l { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+  .tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .tab { padding: 8px 14px; border: 0; background: none; color: var(--muted); font: inherit;
+    font-size: 0.88rem; cursor: pointer; border-bottom: 2px solid transparent; }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 10px; }
+  .card h3 { margin: 0 0 2px; font-size: 1rem; }
+  .card .meta { color: var(--muted); font-size: 0.82rem; }
+  .amount { float: right; font-size: 1.1rem; font-weight: 640; color: var(--accent); }
+  .steps { margin: 10px 0 0; padding-left: 18px; font-size: 0.85rem; }
+  .steps li { margin: 2px 0; }
+  .caveat { font-size: 0.8rem; color: var(--warn); margin-top: 6px; }
+  .tag { display: inline-block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 2px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); margin-right: 5px; }
+  .tag.high { color: var(--good); border-color: currentColor; }
+  .tag.medium { color: var(--warn); border-color: currentColor; }
+  .tag.low { color: var(--bad); border-color: currentColor; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .scroll { overflow-x: auto; }
+  .empty { color: var(--muted); padding: 30px 0; text-align: center; }
+  code { font-family: var(--mono); font-size: 0.85em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+  footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Bank Bonus Planner</h1>
+    <p class="sub">Every tracked US bank account signup bonus, filtered against your situation and slotted onto your pay schedule.</p>
+    <p class="privacy">Your settings stay in this browser's <code>localStorage</code>. Nothing is uploaded — there is no server to upload to.</p>
+  </header>
+
+  <div class="layout">
+    <aside class="panel" id="controls">
+      <h2>Your situation</h2>
+      <label for="state">State</label>
+      <input type="text" id="state" maxlength="2" placeholder="NY" autocomplete="off">
+      <label for="minBonus">Minimum bonus ($)</label>
+      <input type="number" id="minBonus" min="0" step="25">
+      <label for="concurrent">Max concurrent accounts</label>
+      <input type="number" id="concurrent" min="1" max="12">
+      <label for="capital">Cash you can park ($)</label>
+      <input type="number" id="capital" min="0" step="1000">
+
+      <h2 style="margin-top:22px">Your paycheck</h2>
+      <label for="cadence">Cadence</label>
+      <select id="cadence">
+        <option value="weekly">Weekly</option>
+        <option value="biweekly">Biweekly</option>
+        <option value="semimonthly">Semimonthly</option>
+        <option value="monthly">Monthly</option>
+      </select>
+      <div class="row">
+        <div>
+          <label for="nextPay">Next pay date</label>
+          <input type="date" id="nextPay">
+        </div>
+        <div>
+          <label for="ddAmount">Amount ($)</label>
+          <input type="number" id="ddAmount" min="0" step="100">
+        </div>
+      </div>
+      <div class="check"><input type="checkbox" id="splittable"><label for="splittable" style="margin:0">Employer can split my direct deposit</label></div>
+      <div class="check"><input type="checkbox" id="business"><label for="business" style="margin:0">Include business accounts</label></div>
+      <div class="check"><input type="checkbox" id="chex"><label for="chex" style="margin:0">Avoid banks that pull ChexSystems</label></div>
+      <div class="check"><input type="checkbox" id="highOnly"><label for="highOnly" style="margin:0">High-confidence offers only</label></div>
+    </aside>
+
+    <main>
+      <div class="stats" id="stats"></div>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-view="plan" aria-selected="true">Your plan</button>
+        <button class="tab" role="tab" data-view="all" aria-selected="false">All offers</button>
+        <button class="tab" role="tab" data-view="why" aria-selected="false">Why not</button>
+      </div>
+      <div id="view"><p class="empty">Loading offers…</p></div>
+    </main>
+  </div>
+
+  <footer>
+    <strong>Not financial advice.</strong> Bonuses are taxable income (usually 1099-INT).
+    Opening many accounts can trigger ChexSystems denials. Terms change without notice —
+    verify every requirement with the bank before you act. Data is community-maintained and
+    may be wrong or stale; check <code>last verified</code> on each offer.
+    <br><br>
+    Offer data: <a href="../dist/offers.json">offers.json</a> ·
+    <a href="../dist/offers.csv">CSV</a> ·
+    <a href="../dist/offers.rss.xml">RSS</a> ·
+    <a href="https://github.com/AkibMahdi/Checking_Account_Bonus_Automation">source &amp; contribute</a>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

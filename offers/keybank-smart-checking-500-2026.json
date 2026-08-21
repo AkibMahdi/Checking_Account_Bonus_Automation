@@ -1,0 +1,110 @@
+{
+  "id": "keybank-smart-checking-500-2026",
+  "bank": {
+    "name": "KeyBank",
+    "type": "regional_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Key Smart Checking / Key Select Checking",
+    "category": "checking",
+    "monthly_fee": 0,
+    "fee_waiver": "Key Smart Checking has no monthly maintenance fee. Key Select is $25/mo, waived for the first 3 months and thereafter with $3,000+ in direct deposits or $15,000+ combined balances",
+    "personal_or_business": "personal",
+    "min_opening_deposit": 50
+  },
+  "bonus": {
+    "amount": 500,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 300,
+        "condition": "Open Key Smart Checking ($10 minimum opening deposit) and receive $2,000+ in qualifying direct deposits within 90 days",
+        "dd_cumulative": 2000,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 500,
+        "condition": "Open Key Select Checking ($50 minimum opening deposit) and receive $5,000+ in qualifying direct deposits within 90 days",
+        "dd_cumulative": 5000,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 90,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 60,
+    "taxable_1099int": null,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 5000,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": null
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Account must remain open through bonus payout, up to 60 days after requirements are met."
+  },
+  "eligibility": {
+    "cooldown_months": null,
+    "cooldown_basis": null,
+    "cooldown_notes": null,
+    "states_included": [
+      "AK",
+      "CO",
+      "CT",
+      "ID",
+      "IN",
+      "MA",
+      "ME",
+      "MI",
+      "NY",
+      "OH",
+      "OR",
+      "PA",
+      "UT",
+      "VT",
+      "WA"
+    ],
+    "states_excluded": [],
+    "existing_customer_allowed": null,
+    "pull_type": "unknown",
+    "in_branch_required": null,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-12-11",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://bankbonus.com/promotions/keybank/",
+    "aggregator_urls": [
+      "https://www.hustlermoneyblog.com/keybank-checking-account-bonus/",
+      "https://www.forbes.com/advisor/banking/keybank-bonus/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Cooldown is unstated by every source found — planner treats unknown cooldown as a caveat, not a pass."
+}

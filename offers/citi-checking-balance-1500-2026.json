@@ -1,0 +1,99 @@
+{
+  "id": "citi-checking-balance-1500-2026",
+  "bank": {
+    "name": "Citibank",
+    "type": "national_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "Citi Checking",
+    "category": "checking",
+    "monthly_fee": 12,
+    "fee_waiver": "Waived when the account receives $250+ per month in qualifying Enhanced Direct Deposits",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 1500,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 500,
+        "condition": "Deposit $30,000+ in new-to-Citi funds and hold for the required period (no direct deposit required)",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 30000,
+        "window_days": 90,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 1500,
+        "condition": "Deposit $200,000+ in new-to-Citi funds and hold for the required period (no direct deposit required)",
+        "dd_cumulative": null,
+        "dd_count": null,
+        "min_balance": 200000,
+        "window_days": 90,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 30,
+    "taxable_1099int": null,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": false,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": null,
+      "window_days": null,
+      "window_starts": null,
+      "qualifying_notes": "No direct deposit on this path — the bonus is funded by new-to-Citi balances."
+    },
+    "min_balance": {
+      "amount": 30000,
+      "new_money": true,
+      "fund_within_days": 20,
+      "hold_days": 60
+    },
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": true,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "No early-closure fee reported. The balance tiers require holding the deposited balance for a period after funding rather than a post-bonus hold."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": "Requires not having owned a Citi checking account in the last 365 days.",
+    "states_included": null,
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "soft",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-10-22",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.doctorofcredit.com/citi-300-checking-bonus/",
+    "aggregator_urls": [
+      "https://www.citi.com/banking/special-offers",
+      "https://bankbonus.com/promotions/citibank/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "medium",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "Balance-funded path for the same Citi Checking account. Split out from citi-checking-475-2026 because the validator caught the real modelling rule: one offer file = one requirement path. Mixing a $3,000-in-DDs tier and a $200,000-balance tier in one file makes bonus.amount meaningless and makes the planner's feasibility check wrong for both."
+}

@@ -1,0 +1,111 @@
+{
+  "id": "td-complete-checking-300-2026",
+  "bank": {
+    "name": "TD Bank",
+    "type": "regional_bank",
+    "chexsystems": null
+  },
+  "account": {
+    "name": "TD Complete Checking / TD Beyond Checking",
+    "category": "checking",
+    "monthly_fee": 15,
+    "fee_waiver": "TD Complete ($15/mo): waived with $500+ in direct deposits per cycle, a $500 minimum daily balance, or $5,000 combined balances. TD Beyond ($25/mo): waived with $5,000+ in direct deposits per cycle, a $2,500 minimum daily balance, or $25,000 combined balances",
+    "personal_or_business": "personal",
+    "min_opening_deposit": null
+  },
+  "bonus": {
+    "amount": 300,
+    "currency": "USD",
+    "tiers": [
+      {
+        "amount": 200,
+        "condition": "Open TD Complete Checking and receive $500+ in qualifying direct deposits within 60 days of account opening",
+        "dd_cumulative": 500,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 60,
+        "repeatable_cycles": null
+      },
+      {
+        "amount": 300,
+        "condition": "Open TD Beyond Checking and receive $2,500+ in qualifying direct deposits within 60 days of account opening",
+        "dd_cumulative": 2500,
+        "dd_count": null,
+        "min_balance": null,
+        "window_days": 60,
+        "repeatable_cycles": null
+      }
+    ],
+    "payout_days_after_completion": 180,
+    "taxable_1099int": null,
+    "tier_mode": "alternative"
+  },
+  "requirements": {
+    "direct_deposit": {
+      "required": true,
+      "count": null,
+      "min_amount_each": null,
+      "min_amount_cumulative": 2500,
+      "window_days": 60,
+      "window_starts": "account_open",
+      "qualifying_notes": null
+    },
+    "min_balance": null,
+    "debit_transactions": null,
+    "bill_pay": null,
+    "enrollment_required": false,
+    "credit_card_funding_allowed": null
+  },
+  "clawback": {
+    "min_hold_days_after_bonus": null,
+    "early_close_fee": null,
+    "notes": "Bonus is paid on or before 180 days after account opening; account must be open and in good standing at payout."
+  },
+  "eligibility": {
+    "cooldown_months": 12,
+    "cooldown_basis": "per_person",
+    "cooldown_notes": null,
+    "states_included": [
+      "CT",
+      "DC",
+      "DE",
+      "FL",
+      "MD",
+      "ME",
+      "MA",
+      "NC",
+      "NH",
+      "NJ",
+      "NY",
+      "PA",
+      "RI",
+      "SC",
+      "VT",
+      "VA"
+    ],
+    "states_excluded": [],
+    "existing_customer_allowed": false,
+    "pull_type": "unknown",
+    "in_branch_required": false,
+    "promo_code": null
+  },
+  "dates": {
+    "deadline": "2026-09-30",
+    "enroll_by": null,
+    "first_seen": "2026-08-21"
+  },
+  "provenance": {
+    "source_url": "https://www.td.com/us/en/personal-banking/checking-and-saving-bonus",
+    "aggregator_urls": [
+      "https://www.doctorofcredit.com/best-bank-account-bonuses/",
+      "https://www.forbes.com/advisor/banking/td-bank-promotions-bonus/"
+    ],
+    "last_verified": "2026-08-21",
+    "verification_method": "hand_entered",
+    "confidence": "high",
+    "verified_by": "akib",
+    "content_hash": null
+  },
+  "data_points": [],
+  "notes": "A separate $200 TD Signature Savings bonus (deposit $10,000 within 20 days, hold 90 more) can be stacked for up to $500 total."
+}

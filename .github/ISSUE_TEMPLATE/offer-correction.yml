@@ -1,0 +1,39 @@
+name: Offer correction
+description: A tracked offer has a wrong or outdated field.
+title: "[correction] "
+labels: ["correction"]
+body:
+  - type: input
+    id: offer_id
+    attributes:
+      label: Offer ID
+      description: The filename without .json, e.g. chase-total-checking-400-2026
+    validations:
+      required: true
+  - type: input
+    id: field
+    attributes:
+      label: Which field is wrong?
+      placeholder: requirements.direct_deposit.window_days
+    validations:
+      required: true
+  - type: input
+    id: current_value
+    attributes:
+      label: Current value in the repo
+  - type: input
+    id: correct_value
+    attributes:
+      label: Correct value
+    validations:
+      required: true
+  - type: input
+    id: source_url
+    attributes:
+      label: Source for the correction
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Context
