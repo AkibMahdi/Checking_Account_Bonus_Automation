@@ -497,6 +497,115 @@ function render(){
     view==="plan" ? renderLadder(p) : view==="all" ? renderAll() : renderWhy(p);
 }
 
+/* ---------------------------------------------------------------- .ics export
+   Mirrors scripts/calendar.py's plan_to_ics() event-for-event, entirely client-side —
+   there is no server here to generate it for you. UIDs are a stable (non-cryptographic)
+   hash of offer id + event type + index, so re-downloading after a plan change updates
+   the same calendar entries in most apps rather than duplicating them. */
+function icsEscape(s){
+  return String(s ?? "").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");
+}
+function icsFold(line){
+  const enc = s => Array.from(new TextEncoder().encode(s));
+  if(enc(line).length <= 75) return line;
+  const out = []; let chunk = [];
+  for(const ch of line){
+    const raw = enc(ch);
+    const limit = out.length ? 74 : 75;
+    if(chunk.length + raw.length > limit){ out.push(new TextDecoder().decode(new Uint8Array(chunk))); chunk = []; }
+    chunk.push(...raw);
+  }
+  out.push(new TextDecoder().decode(new Uint8Array(chunk)));
+  return out.join("\r\n ");
+}
+function icsStamp(d){
+  const dt = new Date(d);
+  return String(dt.getUTCFullYear()).padStart(4,"0")
+    + String(dt.getUTCMonth()+1).padStart(2,"0")
+    + String(dt.getUTCDate()).padStart(2,"0");
+}
+function icsUid(...parts){
+  const str = parts.join("|");
+  let h1 = 0x811c9dc5, h2 = 0xcbf29ce4;
+  for(let i=0;i<str.length;i++){
+    const c = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 16777619); h2 = Math.imul(h2 ^ c, 0x1000193);
+  }
+  return `${(h1>>>0).toString(16)}${(h2>>>0).toString(16)}@bank-bonus-planner`;
+}
+function icsEvent(summary, day, description, opts){
+  const {alarm, uidParts, generated} = opts;
+  const lines = [
+    "BEGIN:VEVENT",
+    `UID:${icsUid(...uidParts)}`,
+    `DTSTAMP:${icsStamp(generated)}T000000Z`,
+    `DTSTART;VALUE=DATE:${icsStamp(day)}`,
+    `DTEND;VALUE=DATE:${icsStamp(addD(new Date(day),1))}`,
+    `SUMMARY:${icsEscape(summary)}`,
+    `DESCRIPTION:${icsEscape(description)}`,
+    "TRANSP:TRANSPARENT",
+  ];
+  if(alarm) lines.push("BEGIN:VALARM","ACTION:DISPLAY","TRIGGER:-P3D",
+    `DESCRIPTION:${icsEscape(summary)}`,"END:VALARM");
+  lines.push("END:VEVENT");
+  return lines;
+}
+function planToICS(p){
+  const generated = p.today;
+  const lines = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//bank-bonus-planner//EN",
+    "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Bank bonus plan"];
+  for(const i of p.selected){
+    const label = `${i.bank} ${i.account}`;
+    const base = [`Bonus: ${money(i.amount)}`];
+    if(i.headline && i.headline !== i.amount) base.push(`(headline ${money(i.headline)} — planned at a lower tier)`);
+    if(i.promo) base.push(`Promo code: ${i.promo}`);
+    if(i.url) base.push(i.url);
+    const caveatsTxt = i.caveats.map(c=>`- ${c}`).join("\n");
+    const detail = base.join("\n") + (caveatsTxt ? `\n\nCaveats:\n${caveatsTxt}` : "");
+
+    lines.push(...icsEvent(`Open ${label} by ${iso(i.openBy)}`, i.openDate,
+      detail + `\n\nOffer ends ${iso(i.openBy)}.`,
+      {alarm:true, uidParts:[i.id,"open"], generated}));
+
+    i.ddDates.forEach((when,n)=>{
+      lines.push(...icsEvent(`DD #${n+1} of ${money(i.ddEach)} must land at ${i.bank}`, when,
+        `${n+1} of ${i.required} required deposits.\nWindow ${iso(i.windowStart)} to ${iso(i.windowEnd)}.\n${detail}`,
+        {alarm:true, uidParts:[i.id,"dd",n+1], generated}));
+    });
+
+    if(i.capital){
+      lines.push(...icsEvent(`Park ${money(i.capital)} at ${i.bank}`, i.openDate,
+        `Balance must stay put until ${iso(i.capitalFree)}.\n${detail}`,
+        {alarm:true, uidParts:[i.id,"capital"], generated}));
+    }
+
+    lines.push(...icsEvent(`Expected bonus post: ${i.bank} ${money(i.amount)}`, i.bonusPost,
+      `Checkpoint — if it hasn't posted, call the bank before the terms lapse.\n${detail}`,
+      {alarm:false, uidParts:[i.id,"post"], generated}));
+
+    lines.push(...icsEvent(`Safe to close ${i.bank} (hold period ended)`, i.safeClose,
+      `Closing before this date risks a clawback of the bonus.\n${detail}`,
+      {alarm:true, uidParts:[i.id,"close"], generated}));
+
+    if(i.cooldownEnds){
+      lines.push(...icsEvent(`Cooldown ends for ${i.bank} — re-eligible`, i.cooldownEnds,
+        `You can chase this bonus again from today.\n${detail}`,
+        {alarm:false, uidParts:[i.id,"cooldown"], generated}));
+    }
+  }
+  lines.push("END:VCALENDAR");
+  return lines.map(icsFold).join("\r\n") + "\r\n";
+}
+function downloadICS(){
+  const p = lastPlan || buildPlan();
+  const blob = new Blob([planToICS(p)], {type:"text/calendar;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "bonus-plan.ics";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
 /* ---------------------------------------------------------------- wiring */
 function bind(){
   const text = ["state","cadence","nextPay","skipBanks"], nums = ["minBonus","concurrent","capital","ddAmount"];
@@ -532,6 +641,16 @@ function bind(){
     try{ await navigator.clipboard.writeText(text); copy.textContent = "Copied"; }
     catch(_){ copy.textContent = "Couldn't copy — select the page instead"; }
     setTimeout(()=>{ copy.textContent = "Copy the ladder as text"; }, 2200);
+  });
+  const ics = document.getElementById("downloadIcs");
+  ics.addEventListener("click", ()=>{
+    try{
+      downloadICS();
+      ics.textContent = "Downloaded";
+    }catch(_){
+      ics.textContent = "Couldn't build the file — try again";
+    }
+    setTimeout(()=>{ ics.textContent = "Download calendar (.ics)"; }, 2200);
   });
 }
 function bindValues(){

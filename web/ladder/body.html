@@ -64,14 +64,20 @@
   </div>
 
   <footer>
-    <button class="copy" id="copyPlan" type="button">Copy the ladder as text</button>
+    <div class="footerActions">
+      <button class="copy" id="copyPlan" type="button">Copy the ladder as text</button>
+      <button class="copy ghost" id="downloadIcs" type="button">Download calendar (.ics)</button>
+    </div>
+    <p class="hint">One file, every open/deposit/close date for your current ladder, with 3-day-early
+    reminders built in. Import it into Google Calendar (Settings → Import &amp; export → Import),
+    Apple Calendar (just double-click it) or Outlook — no terminal, no Python.</p>
     <p><b>Not financial advice.</b> Bonuses are taxable income, usually reported on a 1099-INT. Opening
     many accounts can trigger ChexSystems denials. Terms change without notice — open the source link on
     every offer and confirm the requirements with the bank before you act.</p>
     <p>The plan is arithmetic over what each bank's page said on the date shown, not a prediction. The
     biggest unknown it cannot see is whether your employer's payment will actually code as a qualifying
     direct deposit at a given bank.</p>
-    <p>Calendar files, the tax summary and the refresh pipeline live in the repo:
-    <code>python3 -m scripts.calendar --out bonus-plan.ics</code></p>
+    <p>The tax summary and the refresh pipeline still live in the repo:
+    <code>python3 -m scripts.calendar --tax-summary tax-summary-2026.md --year 2026</code></p>
   </footer>
 </div>

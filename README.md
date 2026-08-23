@@ -153,6 +153,15 @@ showing each account's requirement window, the wait for the bonus, and the hold 
 can't close inside. Settings live in `localStorage` — nothing is uploaded, because there is
 nowhere to upload it to.
 
+**Calendar export needs no terminal either.** The "Download calendar (.ics)" button builds
+the same file `scripts/calendar.py` would, entirely client-side (see `planToICS()` in
+`web/ladder/app.js`), and hands it to the browser as a normal download. Import it into
+Google Calendar (Settings → Import & export → Import), double-click it for Apple Calendar,
+or drag it into Outlook. There's no live sync — re-download after you change the plan and
+re-import to update it — because a real two-way Google Calendar connection needs OAuth and
+a server holding your token, which would break the "nothing leaves your browser" design of
+this page. The one-file download is the version of this that doesn't need one.
+
 Rebuild it whenever the offer data changes:
 
 ```bash

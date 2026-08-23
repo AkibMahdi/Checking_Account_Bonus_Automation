@@ -373,3 +373,14 @@ def test_ui_has_no_external_dependencies_beyond_google_fonts():
     standalone, _ = build(load_offers(), _date(2026, 8, 21))
     hosts = set(re.findall(r'(?:src|href)="https?://([^/"]+)', standalone))
     assert hosts <= {"fonts.googleapis.com", "fonts.gstatic.com"}, hosts
+
+
+def test_ui_ships_client_side_ics_export():
+    """The web UI's own .ics download must keep working with no server involved —
+    see docs on why this replaced needing `python -m scripts.calendar` for casual use."""
+    from scripts.build_ui import build
+    from datetime import date as _date
+    standalone, _ = build(load_offers(), _date(2026, 8, 21))
+    assert 'id="downloadIcs"' in standalone
+    for fn in ("planToICS", "downloadICS", "icsEvent", "icsFold", "icsEscape"):
+        assert f"function {fn}(" in standalone
