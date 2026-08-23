@@ -136,8 +136,13 @@ Also `dist/offers.csv`, `dist/offers.rss.xml` (new offers) and `dist/stats.json`
 | `build-dist.yml` | merge to main | rebuilds the bundle, publishes the web UI to GitHub Pages |
 | `issue-to-offer.yml` | issue opened | converts a contribution form into a PR |
 
-Extraction is hash-diffed, so steady-state runs make near-zero model calls. Set
-`ANTHROPIC_API_KEY` as a **repository secret** — never in a file that git can see.
+Extraction is hash-diffed, so steady-state runs make near-zero model calls.
+`update-offers.yml` authenticates via **workload identity federation** — GitHub issues
+this job a short-lived OIDC token, which Anthropic exchanges for API access, so no
+static key is stored in the repo at all. See `docs/workload-identity.md` for how it's
+wired up and how to fall back to a plain `ANTHROPIC_API_KEY` secret if you'd rather
+not use WIF. For any *local* run of `scripts/extract.py`, export `ANTHROPIC_API_KEY`
+yourself — never commit it, never put it in a file git can see.
 
 ## The interface
 

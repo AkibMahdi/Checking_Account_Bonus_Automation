@@ -123,18 +123,59 @@ def strip_fences(raw: str) -> str:
     return raw[start:end + 1] if start != -1 and end > start else raw
 
 
-def call_llm(text: str, url: str, schema: dict, today: date, feedback: str | None = None) -> dict:
+def _github_actions_jwt() -> str:
+    """Read the OIDC token a prior workflow step (actions/github-script, audience
+    https://api.anthropic.com) exported as $JWT. Re-read on every call rather than
+    caching, in case a long run ever spans more than one token lifetime."""
+    token = os.environ.get("JWT")
+    if not token:
+        raise RuntimeError(
+            "ANTHROPIC_FEDERATION_RULE_ID is set but $JWT is not. Add a step before this one "
+            "that requests a GitHub OIDC token (audience https://api.anthropic.com) via "
+            "actions/github-script's core.getIDToken() and exports it with "
+            "core.exportVariable('JWT', token)."
+        )
+    return token
+
+
+def build_client():
+    """Workload Identity Federation when configured (no static key in CI); otherwise
+    the plain ANTHROPIC_API_KEY path for local/manual runs."""
     try:
         import anthropic
     except ImportError as exc:
         raise RuntimeError("anthropic SDK required: pip install -r requirements.txt") from exc
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        raise RuntimeError(
-            "ANTHROPIC_API_KEY is not set. Export it in your shell or put it in a local .env "
-            "(gitignored). Never commit it, and in CI use a repository secret."
+
+    federation_rule_id = os.environ.get("ANTHROPIC_FEDERATION_RULE_ID")
+    if federation_rule_id:
+        from anthropic import WorkloadIdentityCredentials
+
+        org_id = os.environ.get("ANTHROPIC_ORG_ID")
+        if not org_id:
+            raise RuntimeError("ANTHROPIC_FEDERATION_RULE_ID is set but ANTHROPIC_ORG_ID is not.")
+        return anthropic.Anthropic(
+            credentials=WorkloadIdentityCredentials(
+                identity_token_provider=_github_actions_jwt,
+                federation_rule_id=federation_rule_id,
+                organization_id=org_id,
+                service_account_id=os.environ.get("ANTHROPIC_SERVICE_ACCOUNT_ID"),
+                workspace_id=os.environ.get("ANTHROPIC_WORKSPACE_ID"),
+            ),
         )
 
-    client = anthropic.Anthropic()
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        raise RuntimeError(
+            "No credentials configured. Either set ANTHROPIC_FEDERATION_RULE_ID (+ "
+            "ANTHROPIC_ORG_ID, and usually ANTHROPIC_SERVICE_ACCOUNT_ID / "
+            "ANTHROPIC_WORKSPACE_ID) for workload identity federation, or export "
+            "ANTHROPIC_API_KEY for a plain API key (never commit it — put it in a "
+            "gitignored local .env for dev, or a repo secret for CI)."
+        )
+    return anthropic.Anthropic()
+
+
+def call_llm(text: str, url: str, schema: dict, today: date, feedback: str | None = None) -> dict:
+    client = build_client()
     prompt = USER_TEMPLATE.format(
         schema=json.dumps(schema, indent=None),
         url=url,

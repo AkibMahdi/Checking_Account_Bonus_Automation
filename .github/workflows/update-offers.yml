@@ -16,6 +16,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write   # lets this job request a GitHub OIDC token for workload identity federation
 
 concurrency:
   group: update-offers
@@ -24,6 +25,18 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    env:
+      # Workload identity federation (see docs/workload-identity.md). These four values
+      # identify configuration, not credentials — Anthropic's own docs treat them as
+      # non-sensitive, since a token exchange also requires a matching GitHub OIDC JWT
+      # from this exact repo/workflow. If you'd rather use a plain API key instead, delete
+      # these four lines and add `ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}` to
+      # the two extract steps below instead — scripts/extract.py falls back to that
+      # automatically when ANTHROPIC_FEDERATION_RULE_ID isn't set.
+      ANTHROPIC_FEDERATION_RULE_ID: fdrl_01LZgkJxBq742pMAyTd7aVy3
+      ANTHROPIC_ORG_ID: a8b80901-cce8-4958-aca5-b19ef2586a9c
+      ANTHROPIC_SERVICE_ACCOUNT_ID: svac_01Q6XzdpxgP7nrSY3HqFWeES
+      ANTHROPIC_WORKSPACE_ID: wrkspc_017yoHHCy7QsSiMKFVSJZqdP
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -32,6 +45,14 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Fetch GitHub OIDC token for Anthropic
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const token = await core.getIDToken('https://api.anthropic.com');
+            core.setSecret(token);
+            core.exportVariable('JWT', token);
 
       - name: Restore content-hash cache
         uses: actions/cache@v4
@@ -45,13 +66,9 @@ jobs:
         continue-on-error: true
 
       - name: Re-extract tracked offers (hash-diffed, near-zero cost when unchanged)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m scripts.extract --refresh-all --limit ${{ github.event.inputs.limit || 60 }} ${{ github.event.inputs.force == 'true' && '--force' || '' }}
 
       - name: Extract newly discovered pages
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           if [ -f data/discovered.json ]; then
             python -m scripts.extract --queue data/discovered.json --limit 25

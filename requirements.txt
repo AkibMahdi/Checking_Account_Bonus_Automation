@@ -5,4 +5,4 @@ jsonschema>=4.20
 # Pipeline (discover.py / extract.py) — optional, only needed to refresh offers
 requests>=2.31
 beautifulsoup4>=4.12
-anthropic>=0.40
+anthropic>=1.0.0   # WorkloadIdentityCredentials (WIF) needs the 1.x SDK
