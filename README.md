@@ -162,7 +162,29 @@ re-import to update it — because a real two-way Google Calendar connection nee
 a server holding your token, which would break the "nothing leaves your browser" design of
 this page. The one-file download is the version of this that doesn't need one.
 
-Rebuild it whenever the offer data changes:
+**Sharing it as something people install, not a repo they clone.** The page is a real
+(if minimal) PWA: `web/ladder/head.html` embeds a web manifest, an `apple-touch-icon`,
+and the `apple-mobile-web-app-capable` meta tags, all as `data:` URIs — no separate
+files, so this works wherever the single HTML file is hosted. On an iPhone: open the
+page's URL in Safari, tap Share, tap **Add to Home Screen**. It gets its own icon (a
+simple ladder glyph, `scripts/make_icons.py` if you want to redraw it) and opens
+full-screen with no address bar — indistinguishable from an installed app, no App
+Store involved. The same works on Android Chrome.
+
+That needs a URL, though, not a local file (iOS Safari's Add to Home Screen doesn't
+do much with `file://` pages) — two are already live once `build-dist.yml` runs on a
+push to `main`:
+
+- **GitHub Pages**, once you flip it on: repo Settings → Pages → Build and deployment
+  → Source → **GitHub Actions** (one-time, GitHub doesn't enable this by default even
+  though the workflow is already written). After that, `build-dist.yml` publishes this
+  exact page to `https://<you>.github.io/<repo>/` on every push — that's the URL to
+  actually hand someone.
+- **The hosted Artifact** this was built and iterated in, which needs no GitHub setup
+  at all and updates daily from the scheduled refresh: see the top of this repo's
+  Claude Project for the current link.
+
+Rebuild the page itself whenever the offer data changes:
 
 ```bash
 python -m scripts.build_ui        # web/ladder/* + offers/*.json -> web/bonus-ladder.html

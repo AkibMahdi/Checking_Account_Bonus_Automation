@@ -48,6 +48,12 @@ jobs:
           mkdir -p _site
           cp -r web/* _site/
           cp -r dist _site/dist
+          # web/index.html is the older, lighter page (fetches dist/offers.json at
+          # runtime instead of inlining it). Keep it reachable at /lite.html, but the
+          # pretty root URL — what a person actually gets sent — should be the current,
+          # full-featured, installable-as-an-app page.
+          cp web/index.html _site/lite.html
+          cp web/bonus-ladder.html _site/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
