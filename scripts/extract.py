@@ -14,6 +14,11 @@ Usage:
     python -m scripts.extract --url https://bank.example/offer
     python -m scripts.extract --queue data/discovered.json --limit 20
     python -m scripts.extract --refresh-all --dry-run
+
+Runs DEFAULT_WORKERS URLs concurrently by default (each is I/O-bound: one page fetch,
+maybe one LLM call) — pass --workers 1 for the old one-at-a-time behaviour, or a higher
+number if your Anthropic rate limit and the target sites' robots.txt/politeness allow it.
+scripts/fetching.py still enforces ~1 request/3s per host no matter how many workers run.
 """
 from __future__ import annotations
 
@@ -22,6 +27,8 @@ import json
 import os
 import re
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -39,6 +46,14 @@ HASHES_PATH = os.path.join(_ROOT, "data", "hashes.json")
 MODEL = os.environ.get("BBP_MODEL", "claude-sonnet-4-5")
 MAX_PAGE_CHARS = 60_000
 MIN_TEXT_CHARS = 600          # below this we assume the page is JS-rendered
+DEFAULT_WORKERS = 6           # concurrent URLs; each one is I/O-bound (page fetch + LLM
+                               # call), so threads are the right tool. fetching.py's
+                               # per-host throttle keeps any single bank/aggregator to
+                               # ~1 request/3s even when many workers are running.
+
+# hashes.json and offers/*.json are shared mutable state touched from every worker thread.
+_hashes_lock = threading.Lock()
+_write_lock = threading.Lock()
 
 SYSTEM_PROMPT = """You extract bank account bonus terms into JSON. Return ONLY valid JSON \
 matching the provided schema. No prose, no markdown fences, no explanation.
@@ -289,7 +304,9 @@ def process_url(url: str, *, today: date, schema: dict, hashes: dict,
         return "empty_page"
 
     chash = content_hash(text)
-    if not force and hashes.get(url) == chash:
+    with _hashes_lock:
+        known = hashes.get(url)
+    if not force and known == chash:
         print("  unchanged (hash match) — no LLM call, bumping last_verified")
         if path and existing and not dry_run:
             existing.setdefault("provenance", {})["last_verified"] = today.isoformat()
@@ -312,7 +329,8 @@ def process_url(url: str, *, today: date, schema: dict, hashes: dict,
             continue
         if candidate.get("no_offer"):
             print("  model reports no active offer on this page")
-            hashes[url] = chash
+            with _hashes_lock:
+                hashes[url] = chash
             return "no_offer"
         candidate = finalise(candidate, url, today, chash, existing)
         schema_errs = validation_errors(candidate, schema)
@@ -325,7 +343,8 @@ def process_url(url: str, *, today: date, schema: dict, hashes: dict,
         print("  rejected after retry — leaving the existing file untouched")
         return "invalid"
 
-    hashes[url] = chash
+    with _hashes_lock:
+        hashes[url] = chash
     target = path or os.path.join(OFFERS_DIR, offer["id"] + ".json")
 
     if existing:
@@ -348,10 +367,11 @@ def process_url(url: str, *, today: date, schema: dict, hashes: dict,
 
 
 def write_offer(path: str, offer: dict) -> None:
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w") as fh:
-        json.dump(offer, fh, indent=2, ensure_ascii=False)
-        fh.write("\n")
+    with _write_lock:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as fh:
+            json.dump(offer, fh, indent=2, ensure_ascii=False)
+            fh.write("\n")
 
 
 def main(argv=None) -> int:
@@ -363,6 +383,9 @@ def main(argv=None) -> int:
     parser.add_argument("--limit", type=int, default=0, help="max URLs this run")
     parser.add_argument("--force", action="store_true", help="ignore the hash cache")
     parser.add_argument("--dry-run", action="store_true", help="fetch and hash, never call the LLM")
+    parser.add_argument("--workers", type=int, default=DEFAULT_WORKERS,
+                        help=f"concurrent URLs to process (default {DEFAULT_WORKERS}; "
+                             "1 = old sequential behaviour)")
     parser.add_argument("--today", default=None)
     args = parser.parse_args(argv)
 
@@ -393,23 +416,54 @@ def main(argv=None) -> int:
     if not ordered:
         parser.error("nothing to do: pass --url, --queue or --refresh-all")
 
-    schema, hashes = load_schema(), load_hashes()
-    tally: dict[str, int] = {}
-    for url in ordered:
+    if not args.dry_run:
         try:
-            outcome = process_url(url, today=today, schema=schema, hashes=hashes,
-                                  dry_run=args.dry_run, force=args.force)
+            build_client()  # fail fast on missing/misconfigured credentials, before any
+                             # fetching starts, rather than discovering it on whichever
+                             # URL happens to need its first real LLM call.
         except RuntimeError as exc:
             print(f"  {exc}")
             return 2
+
+    schema, hashes = load_schema(), load_hashes()
+    tally: dict[str, int] = {}
+    fatal: list[str] = []
+    abort = threading.Event()
+
+    def run_one(url: str) -> str:
+        if abort.is_set():
+            return "skipped"
+        try:
+            return process_url(url, today=today, schema=schema, hashes=hashes,
+                               dry_run=args.dry_run, force=args.force)
+        except RuntimeError as exc:
+            # A credential/auth failure will fail every other URL too — stop burning
+            # requests and rate limit on work that can't succeed. Already-in-flight
+            # workers finish; anything not yet started sees abort.is_set() and bails.
+            fatal.append(str(exc))
+            abort.set()
+            return "error"
         except Exception as exc:  # one bad page must not kill the run
-            print(f"  unexpected error: {type(exc).__name__}: {exc}")
-            outcome = "error"
+            print(f"  unexpected error on {url}: {type(exc).__name__}: {exc}")
+            return "error"
+
+    workers = max(1, args.workers)
+    if workers == 1:
+        outcomes = [run_one(url) for url in ordered]
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = [pool.submit(run_one, url) for url in ordered]
+            outcomes = [f.result() for f in as_completed(futures)]
+
+    for outcome in outcomes:
         tally[outcome] = tally.get(outcome, 0) + 1
 
     if not args.dry_run:
         save_hashes(hashes)
     print("\n" + ", ".join(f"{k}={v}" for k, v in sorted(tally.items())))
+    if fatal:
+        print(f"\nstopped early: {fatal[0]}")
+        return 2
     return 0
 
 

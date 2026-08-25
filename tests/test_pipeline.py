@@ -353,6 +353,123 @@ def test_discover_dedupes_against_tracked_offers():
     assert norm("Chase") != norm("Citibank")
 
 
+def test_discover_covers_many_aggregators_and_all_are_recognised():
+    """Broader discovery only works if every new index-page host is also in
+    AGGREGATOR_HOSTS — otherwise an offer sourced from it could slip through as
+    confidence: high instead of being capped at medium. The two lists must move
+    together; this is the regression guard for that."""
+    from scripts.discover import INDEX_PAGES
+    from scripts.validate import AGGREGATOR_HOSTS, _host, _registrable
+    assert len(INDEX_PAGES) >= 10, "discovery should span many aggregators, not a handful"
+    for url in INDEX_PAGES:
+        registrable = _registrable(_host(url))
+        assert registrable in AGGREGATOR_HOSTS, f"{registrable} (from {url}) missing from AGGREGATOR_HOSTS"
+
+
+# ---------------------------------------------------------------- extraction concurrency
+def test_extract_runs_urls_concurrently(monkeypatch):
+    """--workers > 1 must actually overlap I/O-bound calls, not just accept the flag.
+    Eight URLs at four workers, each stubbed to take 0.15s, should finish well under
+    the 1.2s a sequential run would take."""
+    import time
+    import threading as _threading
+    import scripts.extract as extract_mod
+
+    seen = []
+    seen_lock = _threading.Lock()
+
+    def fake_process_url(url, *, today, schema, hashes, dry_run=False, force=False):
+        with seen_lock:
+            seen.append(url)
+        time.sleep(0.15)
+        return "updated"
+
+    monkeypatch.setattr(extract_mod, "process_url", fake_process_url)
+    monkeypatch.setattr(extract_mod, "build_client", lambda: object())
+    monkeypatch.setattr(extract_mod, "load_hashes", lambda: {})
+    monkeypatch.setattr(extract_mod, "save_hashes", lambda h: None)
+
+    urls = [f"https://bank{i}.example/offer" for i in range(8)]
+    argv = []
+    for u in urls:
+        argv += ["--url", u]
+    argv += ["--workers", "4"]
+
+    start = time.monotonic()
+    rc = extract_mod.main(argv)
+    elapsed = time.monotonic() - start
+
+    assert rc == 0
+    assert sorted(seen) == sorted(urls)
+    assert elapsed < 0.9, f"took {elapsed:.2f}s — --workers doesn't seem to be running concurrently"
+
+
+def test_extract_workers_1_matches_old_sequential_behaviour(monkeypatch):
+    """The concurrency change must be opt-out, not just opt-in."""
+    import scripts.extract as extract_mod
+    order = []
+
+    def fake_process_url(url, *, today, schema, hashes, dry_run=False, force=False):
+        order.append(url)
+        return "unchanged"
+
+    monkeypatch.setattr(extract_mod, "process_url", fake_process_url)
+    monkeypatch.setattr(extract_mod, "build_client", lambda: object())
+    monkeypatch.setattr(extract_mod, "load_hashes", lambda: {})
+    monkeypatch.setattr(extract_mod, "save_hashes", lambda h: None)
+
+    urls = [f"https://bank{i}.example/offer" for i in range(5)]
+    argv = []
+    for u in urls:
+        argv += ["--url", u]
+    argv += ["--workers", "1"]
+    rc = extract_mod.main(argv)
+    assert rc == 0
+    assert order == urls  # strictly in input order when workers=1
+
+
+def test_extract_aborts_early_on_credential_failure(monkeypatch):
+    """A systemic auth failure (bad WIF config, expired JWT) shouldn't burn the whole
+    URL list one failed request at a time."""
+    import scripts.extract as extract_mod
+
+    def failing(url, **kw):
+        raise RuntimeError("credentials not configured")
+
+    monkeypatch.setattr(extract_mod, "process_url", failing)
+    monkeypatch.setattr(extract_mod, "build_client", lambda: object())
+    monkeypatch.setattr(extract_mod, "load_hashes", lambda: {})
+    monkeypatch.setattr(extract_mod, "save_hashes", lambda h: None)
+
+    rc = extract_mod.main(["--url", "https://a.example/1", "--url", "https://b.example/2",
+                           "--workers", "1"])
+    assert rc == 2
+
+
+def test_extract_fails_fast_on_missing_credentials_before_any_fetch(monkeypatch):
+    """Missing credentials should be caught before the first network call, not discovered
+    lazily on whichever URL happens to need an LLM call first."""
+    import scripts.extract as extract_mod
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_FEDERATION_RULE_ID", raising=False)
+    called = []
+    monkeypatch.setattr(extract_mod, "process_url", lambda url, **kw: called.append(url))
+    rc = extract_mod.main(["--url", "https://a.example/1"])
+    assert rc == 2
+    assert called == []
+
+
+def test_fetching_host_lock_is_per_host():
+    """Same host -> same lock (so throttling actually serializes requests to it);
+    different hosts -> different locks (so concurrency across hosts is real)."""
+    from scripts.fetching import _host_lock
+    a1 = _host_lock("bank-a.example")
+    a2 = _host_lock("bank-a.example")
+    b1 = _host_lock("bank-b.example")
+    assert a1 is a2
+    assert a1 is not b1
+
+
 # ---------------------------------------------------------------- ui build
 def test_ui_build_inlines_every_offer_and_leaves_no_placeholders():
     from scripts.build_ui import build

@@ -57,8 +57,12 @@ above for the new IDs.
   access token's lifetime is capped by the rule's "Token lifetime" setting (10 minutes
   by default) and by the underlying GitHub JWT's own expiry. `--refresh-all` across
   many URLs plus a full discovery pass can occasionally outrun a short-lived token —
-  if this happens repeatedly, raise the rule's token lifetime in Console, or shard the
-  job into smaller `--limit` batches.
+  if this happens repeatedly, raise the rule's token lifetime in Console, shard the
+  job into smaller `--limit` batches, or raise `--workers` (default 6 — see
+  "Automation" in the README) so the same batch finishes in less wall-clock time in
+  the first place. `_github_actions_jwt()` re-reads `$JWT` on every LLM call rather
+  than caching it, so a token refreshed mid-run by a longer-lived rule is picked up
+  automatically without a code change.
 - **Want to go back to a plain API key instead**: delete the four `ANTHROPIC_*ID`
   lines from `update-offers.yml`'s job-level `env:`, add
   `ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}` to the two extract steps, and

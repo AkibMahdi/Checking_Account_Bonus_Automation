@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import re
+import threading
 import time
 import urllib.robotparser
 from typing import Optional
@@ -22,18 +23,35 @@ CACHE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 _last_request: dict[str, float] = {}
 _robots: dict[str, urllib.robotparser.RobotFileParser] = {}
 
+# extract.py runs many URLs concurrently (--workers), so this module's per-host state
+# needs real locking, not just "reads/writes happen to be GIL-safe". One lock per host,
+# held across the throttle sleep, keeps "~1 request / 3s per host" true even under
+# concurrency; different hosts get different locks, so they still run in parallel.
+_state_lock = threading.Lock()
+_host_locks: dict[str, threading.Lock] = {}
+
+
+def _host_lock(host: str) -> threading.Lock:
+    with _state_lock:
+        lock = _host_locks.get(host)
+        if lock is None:
+            lock = threading.Lock()
+            _host_locks[host] = lock
+        return lock
+
 
 def _host(url: str) -> str:
     return (urlparse(url).hostname or "").lower()
 
 
 def _throttle(host: str) -> None:
-    last = _last_request.get(host)
-    if last is not None:
-        wait = MIN_INTERVAL_SECONDS - (time.monotonic() - last)
-        if wait > 0:
-            time.sleep(wait)
-    _last_request[host] = time.monotonic()
+    with _host_lock(host):
+        last = _last_request.get(host)
+        if last is not None:
+            wait = MIN_INTERVAL_SECONDS - (time.monotonic() - last)
+            if wait > 0:
+                time.sleep(wait)
+        _last_request[host] = time.monotonic()
 
 
 def robots_allows(url: str) -> bool:
@@ -41,16 +59,17 @@ def robots_allows(url: str) -> bool:
     host = _host(url)
     if not host:
         return False
-    parser = _robots.get(host)
-    if parser is None:
-        parser = urllib.robotparser.RobotFileParser()
-        scheme = urlparse(url).scheme or "https"
-        parser.set_url(f"{scheme}://{host}/robots.txt")
-        try:
-            parser.read()
-        except Exception:
-            parser = None
-        _robots[host] = parser
+    with _host_lock(host):
+        parser = _robots.get(host)
+        if parser is None:
+            parser = urllib.robotparser.RobotFileParser()
+            scheme = urlparse(url).scheme or "https"
+            parser.set_url(f"{scheme}://{host}/robots.txt")
+            try:
+                parser.read()
+            except Exception:
+                parser = None
+            _robots[host] = parser
     if parser is None:
         return True
     try:

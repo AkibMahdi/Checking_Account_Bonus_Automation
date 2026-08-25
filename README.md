@@ -144,6 +144,40 @@ wired up and how to fall back to a plain `ANTHROPIC_API_KEY` secret if you'd rat
 not use WIF. For any *local* run of `scripts/extract.py`, export `ANTHROPIC_API_KEY`
 yourself — never commit it, never put it in a file git can see.
 
+**Discovery and extraction, at more than 24 offers' worth of scale.** The 24 offers
+shipped in `offers/*.json` are a hand-verified seed set, not a ceiling — `discover.py`
+and `extract.py` are what actually find and add more, and both got wider:
+
+- `discover.py` now scrapes **12 aggregator index pages** (Doctor of Credit, Bankrate,
+  Forbes Advisor, NerdWallet, Finder, MoneysMyLife, U.S. News, WalletHub, Fortune,
+  BankBonus, HustlerMoneyBlog) instead of 5, up to 200 candidates a run. Every host it
+  reads is in `AGGREGATOR_HOSTS` (`scripts/validate.py`), so nothing sourced from one
+  can end up at `confidence: high` — only a bank's own domain earns that.
+- `extract.py --workers N` (default **6**) processes URLs concurrently instead of one
+  at a time — each is I/O-bound (a page fetch, sometimes an LLM call), so threads
+  overlap real waiting time. `scripts/fetching.py` still enforces ~1 request/3 seconds
+  *per host* underneath, so a higher worker count parallelizes across different banks
+  and aggregators rather than hammering any single one harder. `--workers 1` gets back
+  the old one-at-a-time behavior if you'd rather not run threads.
+- `update-offers.yml`'s manual dispatch now exposes `workers`, `limit` (tracked-offer
+  re-checks, default 150) and `new_limit` (newly-discovered URLs, default 60) as
+  separate inputs, so you can scale a run up or down from the Actions tab without
+  editing the workflow file.
+
+None of this changes *when* the scheduled run fires — still Mondays 06:00 UTC — since
+that's a real cost/frequency tradeoff (more LLM calls, more Actions minutes) that's
+yours to make, not something to default up quietly. Bump `on.schedule.cron` in
+`update-offers.yml` if you want it more often; hash-diffing keeps an unchanged page
+essentially free either way, so the main cost of running more often is re-fetching
+pages that mostly haven't changed, not re-running the model on them.
+
+Both scripts only reach the open internet, which this repo's own CI runner has and a
+sandboxed dev environment often doesn't — if `discover.py` reports `ProxyError` or
+similar for every index page, that's a network-egress restriction in whatever
+environment you're running it from, not a bug in the script. `workflow_dispatch` (the
+"Run workflow" button on the Actions tab) is the reliable way to trigger an
+unrestricted run on demand instead of waiting for Monday.
+
 ## The interface
 
 **`web/bonus-ladder.html` — double-click it.** One self-contained file: every offer is

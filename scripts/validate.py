@@ -33,6 +33,7 @@ AGGREGATOR_HOSTS = {
     "forbes.com", "moneysmylife.com", "mymoneyblog.com", "thewaystowealth.com",
     "finder.com", "bankrate.com", "cnbc.com", "reddit.com", "creditkarma.com",
     "businessinsider.com", "wsj.com", "investopedia.com", "gobankingrates.com",
+    "usnews.com", "wallethub.com", "fortune.com",
 }
 
 MAX_BONUS = 10_000

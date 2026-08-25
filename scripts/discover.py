@@ -33,13 +33,30 @@ from scripts.fetching import USER_AGENT, clean_text, fetch  # noqa: E402,F401
 OFFERS_DIR = os.path.join(_ROOT, "offers")
 DEFAULT_OUT = os.path.join(_ROOT, "data", "discovered.json")
 
-# Aggregator index pages. Each is a *pointer* source, never a data source.
+# Aggregator index pages. Each is a *pointer* source, never a data source — every host
+# here is in AGGREGATOR_HOSTS (scripts/validate.py), so anything the LLM extracts from
+# one of them gets its confidence capped at "medium" automatically; nothing here can
+# produce a "high confidence" offer, only a bank's own domain can.
+#
+# Twelve roundup pages instead of a handful of banks means a lot more overlap between
+# pages than depth — the point isn't crawling every one exhaustively, it's that a bonus
+# missing from one aggregator's list this week is very often on another's, and dropped/
+# expired offers get pruned by the same logic that adds new ones (a page that no longer
+# mentions a bank we're tracking doesn't remove it — that's what update-offers.yml's
+# --refresh-all re-check + expire-sweep.yml handle instead).
 INDEX_PAGES = [
     "https://www.doctorofcredit.com/best-bank-account-bonuses/",
     "https://www.doctorofcredit.com/category/bank-accounts/bank-bonuses/",
     "https://bankbonus.com/promotions/",
     "https://www.nerdwallet.com/best/banking/bank-account-promotions",
     "https://www.hustlermoneyblog.com/bank-bonus/",
+    "https://www.forbes.com/advisor/banking/best-bank-bonuses-promotions/",
+    "https://www.bankrate.com/banking/best-bank-account-bonuses-and-promotions/",
+    "https://www.finder.com/banking/best-checking-account-bonuses",
+    "https://www.moneysmylife.com/bank-promotions/",
+    "https://www.usnews.com/banking/bank-account-bonuses",
+    "https://wallethub.com/best-bank-account-bonuses",
+    "https://fortune.com/article/best-savings-account-bonuses/",
 ]
 
 AMOUNT_RE = re.compile(r"\$\s?([0-9]{2,5}(?:,[0-9]{3})*)")
@@ -163,7 +180,7 @@ def main(argv=None) -> int:
     parser.add_argument("--min-bonus", type=float, default=150.0)
     parser.add_argument("--index", action="append", default=[],
                         help="extra index page (repeatable)")
-    parser.add_argument("--max-candidates", type=int, default=120)
+    parser.add_argument("--max-candidates", type=int, default=200)
     parser.add_argument("--include-known", action="store_true",
                         help="keep candidates we already have an offer file for")
     args = parser.parse_args(argv)

@@ -6,8 +6,14 @@ on:
   workflow_dispatch:
     inputs:
       limit:
-        description: "Max URLs to process this run"
+        description: "Max tracked URLs to re-check this run"
+        default: "150"
+      new_limit:
+        description: "Max newly-discovered URLs to extract this run"
         default: "60"
+      workers:
+        description: "Concurrent URLs to process (1 = old one-at-a-time behaviour)"
+        default: "6"
       force:
         description: "Ignore the hash cache"
         type: boolean
@@ -66,12 +72,12 @@ jobs:
         continue-on-error: true
 
       - name: Re-extract tracked offers (hash-diffed, near-zero cost when unchanged)
-        run: python -m scripts.extract --refresh-all --limit ${{ github.event.inputs.limit || 60 }} ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+        run: python -m scripts.extract --refresh-all --workers ${{ github.event.inputs.workers || 6 }} --limit ${{ github.event.inputs.limit || 150 }} ${{ github.event.inputs.force == 'true' && '--force' || '' }}
 
       - name: Extract newly discovered pages
         run: |
           if [ -f data/discovered.json ]; then
-            python -m scripts.extract --queue data/discovered.json --limit 25
+            python -m scripts.extract --queue data/discovered.json --workers ${{ github.event.inputs.workers || 6 }} --limit ${{ github.event.inputs.new_limit || 60 }}
           fi
         continue-on-error: true
 
