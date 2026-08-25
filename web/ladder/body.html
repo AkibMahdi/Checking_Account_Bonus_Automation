@@ -45,10 +45,32 @@
 
       <h2 class="later">Constraints</h2>
       <label class="switch"><input type="checkbox" id="splittable"><span>My employer can split my direct deposit</span></label>
+      <div class="field sub" id="maxSplitField"><label for="maxSplit">Accounts per paycheck</label>
+        <input type="number" id="maxSplit" min="1" max="6"></div>
       <label class="switch"><input type="checkbox" id="business"><span>Include business accounts</span></label>
       <label class="switch"><input type="checkbox" id="chex"><span>Avoid banks that pull ChexSystems</span></label>
       <label class="switch"><input type="checkbox" id="highOnly"><span>Only offers confirmed on the bank's own site</span></label>
       <label class="switch"><input type="checkbox" id="totalMode"><span>Maximize total dollars, not dollars per week</span></label>
+      <div class="pair">
+        <div class="field"><label for="hardPulls6mo">Hard pulls / 6mo</label>
+          <input type="number" id="hardPulls6mo" min="0" max="20"></div>
+        <div class="field"><label for="horizonDays">Plan ahead (days)</label>
+          <input type="number" id="horizonDays" min="30" max="1095" step="30"></div>
+      </div>
+
+      <details class="histBox">
+        <summary>Your history <span class="hint" style="display:inline;margin:0">— optional, sharpens cooldowns</span></summary>
+        <p class="hint">Bonuses you've already taken, and accounts still open. Stays in this browser
+          like everything else — used only to catch cooldowns and in-progress accounts the tracked
+          offers can't see on their own.</p>
+        <div id="historyRows"></div>
+        <button type="button" class="addRow" id="addHistoryRow">+ Add a past or open account</button>
+        <p class="hint" style="margin-top:16px">Hard credit pulls outside this planner (credit cards,
+          loans) — counted toward the 6-month limit above.</p>
+        <div id="hardPullRows"></div>
+        <button type="button" class="addRow" id="addHardPull">+ Add a hard pull</button>
+      </details>
+
       <button class="reset" id="reset" type="button">Reset to defaults</button>
     </aside>
 

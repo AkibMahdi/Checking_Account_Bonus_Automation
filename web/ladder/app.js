@@ -10,6 +10,8 @@ const DEFAULTS = {
   state:"NY", minBonus:150, concurrent:3, capital:20000,
   cadence:"biweekly", nextPay:"", ddAmount:2400,
   skipBanks:"", splittable:true, business:false, chex:false, highOnly:false, totalMode:false,
+  horizonDays:365, maxSplit:2, hardPulls6mo:2,
+  bankHistory:[], hardPullLog:[],
 };
 let cfg, view = "plan", lastPlan = null;   // cfg is assigned after the helpers below
 
@@ -131,6 +133,20 @@ function hardFilter(o, today){
   const need = minCapital(o);
   if(need && cfg.capital!=null && need>cfg.capital)
     return `even the cheapest path needs ${money(need)} parked; you set ${money(cfg.capital)}`;
+
+  // Cooldown from your own history — mirrors scripts/planner.py's hard_filters().
+  const cooldown = g(o,"eligibility.cooldown_months");
+  for(const entry of (cfg.bankHistory||[])){
+    if(normBank(entry.bank||"") !== normBank(bank)) continue;
+    if(entry.status === "in_progress") return `you already have an open ${bank} bonus in progress`;
+    const received = parse(entry.bonus_received);
+    if(received && cooldown){
+      const eligibleOn = addM(received, cooldown);
+      if(today < eligibleOn) return `cooldown: you took a ${bank} bonus on ${iso(received)}, re-eligible ${iso(eligibleOn)}`;
+    } else if(received && !cooldown){
+      return `you took a ${bank} bonus on ${iso(received)} and this offer's cooldown is unstated — verify before applying`;
+    }
+  }
   return null;
 }
 
@@ -217,7 +233,7 @@ function score(o, feas, open){
 /* ---------------------------------------------------------------- plan */
 function buildPlan(){
   const today = new Date(new Date().toISOString().slice(0,10)+"T00:00:00Z");
-  const horizon = addD(today, 365);
+  const horizon = addD(today, Number(cfg.horizonDays) || 365);
   let next = parse(cfg.nextPay) || addD(today,7);
   if(next < today){
     const step = {weekly:7, biweekly:14}[cfg.cadence];
@@ -252,12 +268,14 @@ function buildPlan(){
   }
   ranked.sort((a,b)=> (cfg.totalMode ? b.s.net-a.s.net : b.s.score-a.s.score));
 
-  const maxSplit = cfg.splittable ? 2 : 1;
+  const maxSplit = cfg.splittable ? (Number(cfg.maxSplit) || 1) : 1;
+  const hardPullLog = cfg.hardPullLog||[];
   const picked = [];
   for(const e of ranked){
     const o = e.v;
     const needsDD = !!g(o,"requirements.direct_deposit.required");
     const needsCap = g(o,"requirements.min_balance.amount",0) || 0;
+    const isHardPull = g(o,"eligibility.pull_type")==="hard";
     const openBy = [parse(g(o,"dates.deadline")), parse(g(o,"dates.enroll_by"))].filter(Boolean).sort((a,b)=>a-b)[0] || horizon;
     const limit = openBy < horizon ? openBy : horizon;
     let cur = addD(today,1), placed=null, blocker="deposit timing", lastReason="";
@@ -266,6 +284,14 @@ function buildPlan(){
       if(active.length >= cfg.concurrent){
         blocker = `your limit of ${cfg.concurrent} account${cfg.concurrent===1?"":"s"} at a time`;
         cur = active.map(s=>s.bonusPost).sort((a,b)=>a-b)[0] || addD(cur,1); continue;
+      }
+      if(isHardPull){
+        let pulls = picked.filter(s => s.hardPull && (cur-s.openDate)/DAY>=0 && (cur-s.openDate)/DAY<183).length;
+        pulls += hardPullLog.filter(h => { const d=parse(h.date); return d && (cur-d)/DAY>=0 && (cur-d)/DAY<183; }).length;
+        if(pulls >= (Number(cfg.hardPulls6mo) || 0)){
+          blocker = `your limit of ${cfg.hardPulls6mo} hard pull${cfg.hardPulls6mo===1?"":"s"} in 6 months`;
+          cur = addD(cur,7); continue;
+        }
       }
       if(needsCap && cfg.capital!=null){
         const used = picked.filter(s=>s.openDate<=cur && cur<s.capitalFree).reduce((n,s)=>n+s.capital,0);
@@ -313,7 +339,7 @@ function buildPlan(){
       ddDates:f.ddDates, ddEach:f.ddEach, required:f.required, needsDD,
       completion:f.completion, bonusPost, safeClose,
       cooldownEnds: cd ? addM(bonusPost, cd) : null,
-      capital:needsCap,
+      capital:needsCap, hardPull:isHardPull,
       capitalFree: needsCap ? addD(openDate,(mb.fund_within_days||0)+(mb.hold_days||0)) : openDate,
       caveats, ...score(o,f,openDate),
     });
@@ -607,8 +633,14 @@ function downloadICS(){
 }
 
 /* ---------------------------------------------------------------- wiring */
+function toggleMaxSplitField(){
+  const box = document.getElementById("maxSplitField");
+  if(box) box.style.display = cfg.splittable ? "" : "none";
+}
+
 function bind(){
-  const text = ["state","cadence","nextPay","skipBanks"], nums = ["minBonus","concurrent","capital","ddAmount"];
+  const text = ["state","cadence","nextPay","skipBanks"];
+  const nums = ["minBonus","concurrent","capital","ddAmount","maxSplit","hardPulls6mo","horizonDays"];
   for(const id of [...text,...nums]){
     const el = document.getElementById(id);
     el.value = cfg[id];
@@ -622,12 +654,51 @@ function bind(){
   for(const id of ["splittable","business","chex","highOnly","totalMode"]){
     const el = document.getElementById(id);
     el.checked = !!cfg[id];
-    el.addEventListener("change", ()=>{ cfg[id]=el.checked; saveCfg(); render(); });
+    el.addEventListener("change", ()=>{ cfg[id]=el.checked; saveCfg(); toggleMaxSplitField(); render(); });
   }
+  toggleMaxSplitField();
   document.getElementById("reset").addEventListener("click", ()=>{
-    cfg = {...DEFAULTS, nextPay: iso(addD(new Date(),7))};
-    saveCfg(); bindValues(); render();
+    cfg = {...DEFAULTS, nextPay: iso(addD(new Date(),7)), bankHistory:[], hardPullLog:[]};
+    saveCfg(); bindValues(); toggleMaxSplitField(); renderHistoryUI(); render();
   });
+
+  const histRows = document.getElementById("historyRows"), pullRows = document.getElementById("hardPullRows");
+  document.getElementById("addHistoryRow").addEventListener("click", ()=>{
+    cfg.bankHistory = [...(cfg.bankHistory||[]),
+      {bank:"", account:"", opened:"", bonus_received:"", bonus_amount:"", status:"closed"}];
+    saveCfg(); renderHistoryUI();
+  });
+  document.getElementById("addHardPull").addEventListener("click", ()=>{
+    cfg.hardPullLog = [...(cfg.hardPullLog||[]), {date:"", reason:""}];
+    saveCfg(); renderHistoryUI();
+  });
+  histRows.addEventListener("input", e=>{
+    const row = e.target.closest(".histRow"), field = e.target.dataset.field;
+    if(!row || !field) return;
+    const i = Number(row.dataset.idx);
+    cfg.bankHistory[i][field] = e.target.type==="number"
+      ? (e.target.value===""?null:Number(e.target.value)) : e.target.value;
+    saveCfg(); render();
+  });
+  histRows.addEventListener("click", e=>{
+    if(e.target.dataset.remove!=="hist") return;
+    const i = Number(e.target.closest(".histRow").dataset.idx);
+    cfg.bankHistory.splice(i,1); saveCfg(); renderHistoryUI(); render();
+  });
+  pullRows.addEventListener("input", e=>{
+    const row = e.target.closest(".histRow"), field = e.target.dataset.field;
+    if(!row || !field) return;
+    const i = Number(row.dataset.idx);
+    cfg.hardPullLog[i][field] = e.target.value;
+    saveCfg(); render();
+  });
+  pullRows.addEventListener("click", e=>{
+    if(e.target.dataset.remove!=="pull") return;
+    const i = Number(e.target.closest(".histRow").dataset.idx);
+    cfg.hardPullLog.splice(i,1); saveCfg(); renderHistoryUI(); render();
+  });
+  renderHistoryUI();
+
   document.querySelectorAll(".tab").forEach(t=>{
     t.addEventListener("click", ()=>{
       view = t.dataset.view;
@@ -654,10 +725,42 @@ function bind(){
   });
 }
 function bindValues(){
-  for(const id of ["state","cadence","nextPay","skipBanks","minBonus","concurrent","capital","ddAmount"])
+  for(const id of ["state","cadence","nextPay","skipBanks","minBonus","concurrent","capital","ddAmount",
+                    "maxSplit","hardPulls6mo","horizonDays"])
     document.getElementById(id).value = cfg[id];
   for(const id of ["splittable","business","chex","highOnly","totalMode"])
     document.getElementById(id).checked = !!cfg[id];
+}
+
+/* ---------------------------------------------------------------- history UI
+   Bank history and past hard pulls are optional, freeform, device-only records
+   (localStorage, same as every other setting) that sharpen the cooldown and
+   hard-pull-pacing checks in hardFilter()/buildPlan(). Nothing here is validated
+   against real accounts — it's exactly as trustworthy as what the person types in. */
+function renderHistoryUI(){
+  const rows = document.getElementById("historyRows");
+  rows.innerHTML = (cfg.bankHistory||[]).length ? (cfg.bankHistory||[]).map((h,i)=>`
+    <div class="histRow" data-idx="${i}">
+      <input type="text" placeholder="Bank" value="${esc(h.bank||"")}" data-field="bank">
+      <input type="text" placeholder="Account" value="${esc(h.account||"")}" data-field="account">
+      <input type="date" title="Opened" value="${esc(h.opened||"")}" data-field="opened">
+      <input type="date" title="Bonus received" value="${esc(h.bonus_received||"")}" data-field="bonus_received">
+      <input type="number" placeholder="Bonus $" value="${h.bonus_amount??""}" data-field="bonus_amount">
+      <select data-field="status">
+        <option value="closed"${h.status==="closed"?" selected":""}>Closed</option>
+        <option value="open"${h.status==="open"?" selected":""}>Open</option>
+        <option value="in_progress"${h.status==="in_progress"?" selected":""}>In progress</option>
+      </select>
+      <button type="button" class="rmRow" data-remove="hist" title="Remove">&times;</button>
+    </div>`).join("") : `<p class="hint">None added — cooldowns won't check against past bonuses.</p>`;
+
+  const pulls = document.getElementById("hardPullRows");
+  pulls.innerHTML = (cfg.hardPullLog||[]).length ? (cfg.hardPullLog||[]).map((h,i)=>`
+    <div class="histRow pull" data-idx="${i}">
+      <input type="date" title="Date" value="${esc(h.date||"")}" data-field="date">
+      <input type="text" placeholder="Reason (e.g. credit card)" value="${esc(h.reason||"")}" data-field="reason">
+      <button type="button" class="rmRow" data-remove="pull" title="Remove">&times;</button>
+    </div>`).join("") : `<p class="hint">None added.</p>`;
 }
 
 cfg = loadCfg();

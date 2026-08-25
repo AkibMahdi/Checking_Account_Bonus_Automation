@@ -153,6 +153,20 @@ showing each account's requirement window, the wait for the bonus, and the hold 
 can't close inside. Settings live in `localStorage` — nothing is uploaded, because there is
 nowhere to upload it to.
 
+**Every field in `user-config.yaml` has a web equivalent — cloning the repo and hand-editing
+YAML is optional, not required.** The sidebar covers the full `profile` and `pay_schedule`
+blocks (state, minimum bonus, concurrent-account limit, cash you can park, pay cadence and
+amount, how many accounts your paycheck can be split across, hard-pull pacing, how far ahead
+to plan), plus an optional "Your history" panel for `bank_history` and `hard_pulls` — the two
+things the planner needs but can't infer from the offer data itself. Add a past or in-progress
+account and the sidebar's cooldown check picks it up immediately (same `_add_months`/
+`_norm_bank` logic as `hard_filters()` in `planner.py`, ported line-for-line to
+`hardFilter()` in `web/ladder/app.js`); log a hard pull and it counts toward the 6-month
+pacing limit the same way `build_plan()`'s slotting loop does. Everything — including that
+history — is `JSON.stringify`'d into `localStorage` on this one device and never touches a
+network request; "Reset to defaults" clears it. There is deliberately no cloud sync between
+devices, for the same reason there's no server: nowhere for the data to leave the browser to.
+
 **Calendar export needs no terminal either.** The "Download calendar (.ics)" button builds
 the same file `scripts/calendar.py` would, entirely client-side (see `planToICS()` in
 `web/ladder/app.js`), and hands it to the browser as a normal download. Import it into

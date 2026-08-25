@@ -104,6 +104,32 @@ main{min-width:0}
   color:var(--ink-2);font:inherit;font-size:.79rem;border-radius:var(--r-sm);cursor:pointer;
   transition:border-color .12s ease,color .12s ease}
 .reset:hover{border-color:var(--ink-3);color:var(--ink)}
+.field.sub{margin-top:8px;margin-left:2px}
+.field.sub label{font-size:.72rem}
+
+/* ---------- history disclosure ---------- */
+.histBox{margin-top:20px;padding-top:18px;border-top:1px solid var(--rule)}
+.histBox summary{cursor:pointer;font-family:var(--mono);font-size:.66rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);list-style:none;display:flex;align-items:center;gap:8px}
+.histBox summary::-webkit-details-marker{display:none}
+.histBox summary::before{content:"▸";font-family:var(--sans);color:var(--ink-3);transition:transform .12s ease}
+.histBox[open] summary::before{transform:rotate(90deg)}
+.histBox summary:hover{color:var(--ink-2)}
+.histBox > .hint{margin-top:10px}
+.histRow{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;padding:10px;
+  background:var(--sunk);border:1px solid var(--rule);border-radius:var(--r-sm)}
+.histRow.pull{grid-template-columns:1fr 1fr auto}
+.histRow input,.histRow select{width:100%;padding:7px 9px;border:1px solid var(--rule-2);
+  border-radius:6px;background:var(--panel);color:var(--ink);font:inherit;font-size:.78rem}
+.histRow input[type=date],.histRow input[type=number]{font-family:var(--mono)}
+.histRow .rmRow{grid-column:-1/-2;justify-self:end}
+.histRow.pull .rmRow{grid-column:auto}
+.rmRow{width:26px;height:26px;border:1px solid var(--rule-2);background:transparent;color:var(--ink-3);
+  border-radius:6px;cursor:pointer;font-size:.9rem;line-height:1}
+.rmRow:hover{border-color:var(--bad);color:var(--bad)}
+.addRow{margin-top:10px;width:100%;padding:8px;border:1px dashed var(--rule-2);background:transparent;
+  color:var(--ink-2);font:inherit;font-size:.78rem;border-radius:var(--r-sm);cursor:pointer}
+.addRow:hover{border-color:var(--ink-3);color:var(--ink)}
 
 /* ---------- figures ---------- */
 .figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:30px}

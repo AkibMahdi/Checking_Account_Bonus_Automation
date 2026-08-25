@@ -384,3 +384,23 @@ def test_ui_ships_client_side_ics_export():
     assert 'id="downloadIcs"' in standalone
     for fn in ("planToICS", "downloadICS", "icsEvent", "icsFold", "icsEscape"):
         assert f"function {fn}(" in standalone
+
+
+def test_ui_ships_full_profile_config_no_terminal_needed():
+    """Every knob user-config.yaml exposes (profile, pay_schedule, bank_history, hard_pulls)
+    must be settable in the web UI too, so cloning the repo and hand-editing YAML is never
+    required just to personalize the plan. All of it stays in localStorage — see loadCfg()/
+    saveCfg() in web/ladder/app.js and the privacy line in web/ladder/body.html."""
+    from scripts.build_ui import build
+    from datetime import date as _date
+    standalone, _ = build(load_offers(), _date(2026, 8, 21))
+    for field_id in ("state", "minBonus", "concurrent", "capital", "cadence", "nextPay",
+                      "ddAmount", "skipBanks", "splittable", "business", "chex",
+                      "maxSplit", "hardPulls6mo", "horizonDays"):
+        assert f'id="{field_id}"' in standalone, f"missing sidebar control for {field_id}"
+    assert 'id="historyRows"' in standalone and 'id="addHistoryRow"' in standalone
+    assert 'id="hardPullRows"' in standalone and 'id="addHardPull"' in standalone
+    for fn in ("renderHistoryUI", "toggleMaxSplitField"):
+        assert f"function {fn}(" in standalone
+    # the two Python-only planner behaviours this closes the gap on
+    assert "cooldown:" in standalone and "hard pull" in standalone
