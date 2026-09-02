@@ -87,7 +87,8 @@
     "verification_method": "hand_entered",
     "confidence": "high",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-09-02"
   },
   "data_points": [],
   "notes": "Deadline is imminent (10 days from first_seen) — a good test of the near-expiry warning path. payout_days_after_completion is null because the bank states a 60-90 day range, not a single figure."

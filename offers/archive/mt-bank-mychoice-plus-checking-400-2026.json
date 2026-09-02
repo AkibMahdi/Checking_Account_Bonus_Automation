@@ -82,7 +82,8 @@
     "verification_method": "hand_entered",
     "confidence": "high",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-09-02"
   },
   "data_points": [],
   "notes": "One of only two offers in the set with a real clawback (180-day hold, $50 early close fee) — the safe-to-close date matters here."
