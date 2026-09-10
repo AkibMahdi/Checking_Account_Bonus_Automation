@@ -96,7 +96,8 @@
     "verification_method": "hand_entered",
     "confidence": "high",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-09-10"
   },
   "data_points": [],
   "notes": "Also requires enrolling in the U.S. Bank mobile app or online banking within 90 days. Bonus is credited as adjusted interest and reported on 1099-INT. Offer may be unavailable outside the U.S. Bank footprint but no state list is published, so states_included is left null."
