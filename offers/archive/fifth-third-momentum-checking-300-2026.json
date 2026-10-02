@@ -80,7 +80,8 @@
     "verification_method": "hand_entered",
     "confidence": "medium",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-02"
   },
   "data_points": [],
   "notes": "Low bar for a biweekly earner: one $500+ paycheck inside 90 days clears it."

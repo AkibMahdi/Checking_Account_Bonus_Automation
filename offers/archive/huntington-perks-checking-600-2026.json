@@ -109,7 +109,8 @@
     "verification_method": "hand_entered",
     "confidence": "high",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-02"
   },
   "data_points": [],
   "notes": "The $600 tier is balance-driven, not DD-driven — the $400 Perks tier is the one a biweekly earner actually plans around."

@@ -104,7 +104,8 @@
     "verification_method": "hand_entered",
     "confidence": "high",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-02"
   },
   "data_points": [],
   "notes": "A separate $200 TD Signature Savings bonus (deposit $10,000 within 20 days, hold 90 more) can be stacked for up to $500 total."
