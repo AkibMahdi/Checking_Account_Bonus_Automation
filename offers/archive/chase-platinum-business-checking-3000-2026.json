@@ -70,7 +70,8 @@
     "verification_method": "hand_entered",
     "confidence": "high",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-03"
   },
   "data_points": [],
   "notes": "Capital-intensive: $300k parked for 6 months. Included to prove the schema handles balance-only offers with no DD leg."
