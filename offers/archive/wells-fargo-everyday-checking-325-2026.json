@@ -68,7 +68,8 @@
     "verification_method": "hand_entered",
     "confidence": "high",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-15"
   },
   "data_points": [],
   "notes": "Some aggregators advertise $400; the live Wells Fargo offer page confirms $325."
