@@ -73,7 +73,8 @@
     "verification_method": "hand_entered",
     "confidence": "medium",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-16"
   },
   "data_points": [],
   "notes": "TARGETED offer — savings leg of a combined $900 checking + savings promotion. Not publicly available to everyone; no chase.com page could be retrieved."

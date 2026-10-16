@@ -68,7 +68,8 @@
     "verification_method": "hand_entered",
     "confidence": "high",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-16"
   },
   "data_points": [],
   "notes": "window_starts is coupon_enrollment, not account_open: the 90-day clock runs from when the coupon is enrolled."
