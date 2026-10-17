@@ -95,7 +95,8 @@
     "verification_method": "hand_entered",
     "confidence": "medium",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-17"
   },
   "data_points": [],
   "notes": "Business offer — excluded unless profile.allow_business_accounts is true."
