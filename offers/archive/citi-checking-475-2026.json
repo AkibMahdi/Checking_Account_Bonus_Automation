@@ -1,5 +1,5 @@
 {
-  "id": "citi-checking-balance-1500-2026",
+  "id": "citi-checking-475-2026",
   "bank": {
     "name": "Citibank",
     "type": "national_bank",
@@ -14,24 +14,24 @@
     "min_opening_deposit": null
   },
   "bonus": {
-    "amount": 1500,
+    "amount": 475,
     "currency": "USD",
     "tiers": [
       {
-        "amount": 500,
-        "condition": "Deposit $30,000+ in new-to-Citi funds and hold for the required period (no direct deposit required)",
-        "dd_cumulative": null,
-        "dd_count": null,
-        "min_balance": 30000,
+        "amount": 325,
+        "condition": "$3,000+ in Enhanced Direct Deposits within 90 days of account opening",
+        "dd_cumulative": 3000,
+        "dd_count": 2,
+        "min_balance": null,
         "window_days": 90,
         "repeatable_cycles": null
       },
       {
-        "amount": 1500,
-        "condition": "Deposit $200,000+ in new-to-Citi funds and hold for the required period (no direct deposit required)",
-        "dd_cumulative": null,
-        "dd_count": null,
-        "min_balance": 200000,
+        "amount": 475,
+        "condition": "$5,000+ in Enhanced Direct Deposits within 90 days; limited-market availability",
+        "dd_cumulative": 5000,
+        "dd_count": 2,
+        "min_balance": null,
         "window_days": 90,
         "repeatable_cycles": null
       }
@@ -42,20 +42,15 @@
   },
   "requirements": {
     "direct_deposit": {
-      "required": false,
-      "count": null,
+      "required": true,
+      "count": 2,
       "min_amount_each": null,
-      "min_amount_cumulative": null,
-      "window_days": null,
-      "window_starts": null,
-      "qualifying_notes": "No direct deposit on this path — the bonus is funded by new-to-Citi balances."
+      "min_amount_cumulative": 3000,
+      "window_days": 90,
+      "window_starts": "account_open",
+      "qualifying_notes": "Enhanced Direct Deposits are broader than typical: payroll, pension, Social Security and government benefits, plus Zelle and ACH-based P2P payments (Venmo, PayPal) reportedly qualify."
     },
-    "min_balance": {
-      "amount": 30000,
-      "new_money": true,
-      "fund_within_days": 20,
-      "hold_days": 60
-    },
+    "min_balance": null,
     "debit_transactions": null,
     "bill_pay": null,
     "enrollment_required": true,
@@ -92,8 +87,9 @@
     "verification_method": "hand_entered",
     "confidence": "medium",
     "verified_by": "akib",
-    "content_hash": null
+    "content_hash": null,
+    "archived_on": "2026-10-24"
   },
   "data_points": [],
-  "notes": "Balance-funded path for the same Citi Checking account. Split out from citi-checking-475-2026 because the validator caught the real modelling rule: one offer file = one requirement path. Mixing a $3,000-in-DDs tier and a $200,000-balance tier in one file makes bonus.amount meaningless and makes the planner's feasibility check wrong for both."
+  "notes": "Citi renders its bonus terms dynamically, so amounts and deadline are aggregator-sourced. Sources conflict on the deadline (DoC says 2026-10-22, bankbonus.com says 2026-10-26). The $325 tier is nationwide; the $475 tier is limited-market (reported NY, CT, MD, VA, DC, CA, NV, NJ and select FL/IL) — headline is the max achievable, so verify market eligibility before planning on $475. The balance-funded path is filed separately as citi-checking-balance-1500-2026: same account, different requirement path, so it gets its own offer file."
 }
